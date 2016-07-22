@@ -15,10 +15,11 @@ var Fabrique;
          * Storage driver for cookies
          */
         var CookieStorage = (function () {
-            function CookieStorage(ns) {
+            function CookieStorage(spacedName) {
+                if (spacedName === void 0) { spacedName = ''; }
                 this.keys = [];
                 this.namespace = '';
-                this.setNamespace(ns);
+                this.setNamespace(spacedName);
             }
             Object.defineProperty(CookieStorage.prototype, "length", {
                 get: function () {
@@ -77,26 +78,78 @@ var Fabrique;
 (function (Fabrique) {
     var StorageAdapters;
     (function (StorageAdapters) {
-        var SuperStorage = Fabrique.Plugins.SuperStorage;
+        /**
+         * Storage driver for browser's localStorage
+         */
+        var IframeStorage = (function () {
+            function IframeStorage(spacedName) {
+                if (spacedName === void 0) { spacedName = ''; }
+                this.namespace = '';
+                this.setNamespace(spacedName);
+            }
+            Object.defineProperty(IframeStorage.prototype, "length", {
+                get: function () {
+                    var keys = Object.keys(localStorage);
+                    return Fabrique.StorageUtils.nameSpaceKeyFilter(keys, this.namespace).length;
+                },
+                enumerable: true,
+                configurable: true
+            });
+            IframeStorage.prototype.key = function (n) {
+                var keys = Object.keys(localStorage);
+                var spacedKeys = Fabrique.StorageUtils.nameSpaceKeyFilter(keys, this.namespace);
+                return localStorage.getItem(spacedKeys[n]);
+            };
+            IframeStorage.prototype.getItem = function (key) {
+                return localStorage.getItem(this.namespace + key);
+            };
+            IframeStorage.prototype.setItem = function (key, value) {
+                localStorage.setItem(this.namespace + key, value);
+            };
+            IframeStorage.prototype.deleteItem = function (key) {
+                localStorage.removeItem(this.namespace + key);
+            };
+            IframeStorage.prototype.empty = function () {
+                var keys = Object.keys(localStorage);
+                var spacedKeys = Fabrique.StorageUtils.nameSpaceKeyFilter(keys, this.namespace);
+                for (var i = 0; i < spacedKeys.length; i++) {
+                    localStorage.removeItem(spacedKeys[i]);
+                }
+            };
+            IframeStorage.prototype.setNamespace = function (spacedName) {
+                if (spacedName) {
+                    this.namespace = spacedName + ':';
+                }
+            };
+            return IframeStorage;
+        })();
+        StorageAdapters.IframeStorage = IframeStorage;
+    })(StorageAdapters = Fabrique.StorageAdapters || (Fabrique.StorageAdapters = {}));
+})(Fabrique || (Fabrique = {}));
+var Fabrique;
+(function (Fabrique) {
+    var StorageAdapters;
+    (function (StorageAdapters) {
         /**
          * Storage driver for browser's localStorage
          */
         var LocalStorage = (function () {
             function LocalStorage(spacedName) {
+                if (spacedName === void 0) { spacedName = ''; }
                 this.namespace = '';
                 this.setNamespace(spacedName);
             }
             Object.defineProperty(LocalStorage.prototype, "length", {
                 get: function () {
                     var keys = Object.keys(localStorage);
-                    return SuperStorage.nameSpaceKeyFilter(keys, this.namespace).length;
+                    return Fabrique.StorageUtils.nameSpaceKeyFilter(keys, this.namespace).length;
                 },
                 enumerable: true,
                 configurable: true
             });
             LocalStorage.prototype.key = function (n) {
                 var keys = Object.keys(localStorage);
-                var spacedKeys = SuperStorage.nameSpaceKeyFilter(keys, this.namespace);
+                var spacedKeys = Fabrique.StorageUtils.nameSpaceKeyFilter(keys, this.namespace);
                 return localStorage.getItem(spacedKeys[n]);
             };
             LocalStorage.prototype.getItem = function (key) {
@@ -110,7 +163,7 @@ var Fabrique;
             };
             LocalStorage.prototype.empty = function () {
                 var keys = Object.keys(localStorage);
-                var spacedKeys = SuperStorage.nameSpaceKeyFilter(keys, this.namespace);
+                var spacedKeys = Fabrique.StorageUtils.nameSpaceKeyFilter(keys, this.namespace);
                 for (var i = 0; i < spacedKeys.length; i++) {
                     localStorage.removeItem(spacedKeys[i]);
                 }
@@ -141,25 +194,13 @@ var Fabrique;
                 Object.defineProperty(game, 'storage', {
                     value: this
                 });
-                try {
-                    if (typeof localStorage === 'object') {
-                        localStorage.setItem('testingLocalStorage', 'foo');
-                        localStorage.removeItem('testingLocalStorage');
-                        this.storage = new Fabrique.StorageAdapters.LocalStorage('Quartz');
-                    }
-                    else {
-                        this.storage = new Fabrique.StorageAdapters.CookieStorage('Quartz');
-                    }
+                if (Fabrique.StorageUtils.isLocalStorageSupport()) {
+                    this.setAdapter(new Fabrique.StorageAdapters.LocalStorage());
                 }
-                catch (e) {
-                    this.storage = new Fabrique.StorageAdapters.CookieStorage('Quartz');
+                else {
+                    this.setAdapter(new Fabrique.StorageAdapters.CookieStorage());
                 }
             }
-            SuperStorage.nameSpaceKeyFilter = function (keys, namespace) {
-                return keys.filter(function (keyName) {
-                    return (keyName.substring(0, namespace.length) === namespace);
-                });
-            };
             SuperStorage.prototype.setAdapter = function (storageAdapter) {
                 this.storage = storageAdapter;
             };
@@ -187,5 +228,47 @@ var Fabrique;
         })(Phaser.Plugin);
         Plugins.SuperStorage = SuperStorage;
     })(Plugins = Fabrique.Plugins || (Fabrique.Plugins = {}));
+})(Fabrique || (Fabrique = {}));
+var Fabrique;
+(function (Fabrique) {
+    (function (StorageCommand) {
+        StorageCommand[StorageCommand["init"] = 0] = "init";
+        StorageCommand[StorageCommand["setItem"] = 1] = "setItem";
+        StorageCommand[StorageCommand["getItem"] = 2] = "getItem";
+        StorageCommand[StorageCommand["removeItem"] = 3] = "removeItem";
+        StorageCommand[StorageCommand["clear"] = 4] = "clear";
+        StorageCommand[StorageCommand["setNamespace"] = 5] = "setNamespace";
+        StorageCommand[StorageCommand["length"] = 6] = "length";
+        StorageCommand[StorageCommand["key"] = 7] = "key";
+    })(Fabrique.StorageCommand || (Fabrique.StorageCommand = {}));
+    var StorageCommand = Fabrique.StorageCommand;
+    var StorageUtils = (function () {
+        function StorageUtils() {
+        }
+        StorageUtils.isLocalStorageSupport = function () {
+            try {
+                if (typeof localStorage === 'object') {
+                    localStorage.setItem('testingLocalStorage', 'foo');
+                    localStorage.removeItem('testingLocalStorage');
+                    return true;
+                }
+            }
+            catch (e) { }
+            return false;
+        };
+        StorageUtils.validateMessage = function (data) {
+            if (data.hasOwnProperty('command')) {
+                return data;
+            }
+            return null;
+        };
+        StorageUtils.nameSpaceKeyFilter = function (keys, namespace) {
+            return keys.filter(function (keyName) {
+                return (keyName.substring(0, namespace.length) === namespace);
+            });
+        };
+        return StorageUtils;
+    })();
+    Fabrique.StorageUtils = StorageUtils;
 })(Fabrique || (Fabrique = {}));
 //# sourceMappingURL=phaser-super-storage.js.map

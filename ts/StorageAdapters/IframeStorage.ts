@@ -3,7 +3,7 @@ module Fabrique {
         /**
          * Storage driver for browser's localStorage
          */
-        export class LocalStorage implements IStorage {
+        export class IframeStorage implements IStorage {
             public namespace: string = '';
 
             constructor(spacedName: string = '') {

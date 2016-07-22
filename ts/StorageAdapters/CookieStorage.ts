@@ -14,8 +14,8 @@ module Fabrique {
 
             public namespace: string = '';
 
-            constructor(ns: string) {
-                this.setNamespace(ns);
+            constructor(spacedName: string = '') {
+                this.setNamespace(spacedName);
             }
 
             get length(): number {

@@ -38,8 +38,12 @@ module.exports = function (grunt) {
                 noImplicitAny: true
             },
             dist: {
-                src: ['ts/**/*.ts'],
+                src: ['ts/**/*.ts', '!ts/Utils/Helper.ts'],
                 dest: 'build/<%= pkg.name %>.js'
+            },
+            helper: {
+                src: ['ts/Utils/*.ts', 'ts/StorageAdapters/LocalStorage.ts', 'ts/StorageAdapters/IStorage.ts'],
+                dest: 'build/phaser-storage-helper.js'
             }
         },
         watch: {
@@ -75,6 +79,9 @@ module.exports = function (grunt) {
                 files: {
                     'build/<%= pkg.name %>.min.js': [
                         'build/<%= pkg.name %>.js'
+                    ],
+                    'build/phaser-storage-helper.min.js': [
+                        'build/phaser-storage-helper.js'
                     ]
                 }
             }
@@ -95,6 +102,7 @@ module.exports = function (grunt) {
     grunt.registerTask('dist', [
         'clean:dist',     //Clean the dist folder
         'typescript:dist',//Run typescript on the preprocessed files, for dist (client)
+        'typescript:helper',
         'uglify:dist',    //Minify everything
         'usebanner:dist'    //Minify everything
     ]);

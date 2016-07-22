@@ -13,25 +13,12 @@ module Fabrique {
                 Object.defineProperty(game, 'storage', {
                     value: this
                 });
-                try {
-                    if (typeof localStorage === 'object') {
-                        localStorage.setItem('testingLocalStorage', 'foo');
-                        localStorage.removeItem('testingLocalStorage');
-                        this.storage = new StorageAdapters.LocalStorage('Quartz');
-                    } else {
-                        this.storage = new StorageAdapters.CookieStorage('Quartz');
-                    }
-                } catch (e) {
-                    this.storage = new StorageAdapters.CookieStorage('Quartz');
-                }
-                
-            }
 
-            public static nameSpaceKeyFilter(keys: string[], namespace: string): string[]
-            {
-                return keys.filter((keyName: string) => {
-                    return (keyName.substring(0, namespace.length) === namespace);
-                });
+                if (StorageUtils.isLocalStorageSupport()) {
+                    this.setAdapter(new StorageAdapters.LocalStorage());
+                } else {
+                    this.setAdapter(new StorageAdapters.CookieStorage());
+                }
             }
 
             public setAdapter(storageAdapter: StorageAdapters.IStorage): void {
