@@ -10,6 +10,8 @@ module Fabrique {
             
             private storageLength: number = 0;
 
+            private enabled: boolean = true;
+
             constructor(spacedName: string = '', expectedOrigin: string = '*') {
                 if (spacedName !== '') {
                     this.setNamespace(spacedName);
@@ -18,7 +20,13 @@ module Fabrique {
                 this.expectedOrigin = expectedOrigin;
 
                 this.sendMessage(<StorageMessage>{
-                    command: StorageCommand.length
+                    command: StorageCommand.init
+                }).then(() => {
+                    this.sendMessage(<StorageMessage>{
+                        command: StorageCommand.length
+                    })
+                }).catch(() => {
+                    this.enabled = false;
                 });
             }
 
@@ -70,9 +78,14 @@ module Fabrique {
 
             private sendMessage(message: StorageMessage): Promise<any> {
                 return new Promise((resolve : (value?: any | Thenable<any>) => void, reject: (error?: any) => void) => {
+                    if (!this.enabled) {
+                        reject('Messaging not enabled!');
+                    }
                     var messageChannel:MessageChannel = new MessageChannel();
 
                     messageChannel.port1.onmessage = (event: MessageEvent) => {
+                        console.log('Frame received message', event);
+
                         let message: Fabrique.StorageMessage = StorageUtils.validateMessage(event.data);
 
                         if (message.status === undefined || message.status !== 'ok') {
@@ -80,23 +93,32 @@ module Fabrique {
                         }
 
                         if (message.length !== undefined) {
-                            this.storageLength = message.value;
+                            this.storageLength = message.length;
                         }
 
                         switch (message.command) {
                             case StorageCommand.setNamespace:
                                 this.namespace = message.value + ':';
-                                resolve();
-                                break;
                             case StorageCommand.getItem:
+                            case StorageCommand.length:
+                            case StorageCommand.key:
                                 resolve(message.value);
                                 break;
-                            case StorageCommand.length:
-                                resolve(message.value);
+                            case StorageCommand.setItem:
+                            case StorageCommand.removeItem:
+                            case StorageCommand.clear:
+                                resolve(message.status);
+                                break;
+                            default:
+                                reject(message.value);
+                                break;
                         }
                     };
 
-                    window.parent.postMessage(message, this.expectedOrigin, [messageChannel.port2]);
+                    if (this.enabled) {
+                        console.log('Sending message to parent: ', message);
+                        window.parent.postMessage(message, this.expectedOrigin, [messageChannel.port2]);
+                    }
                 });
             }
         }

@@ -43,6 +43,7 @@ declare module Fabrique {
             namespace: string;
             expectedOrigin: string;
             private storageLength;
+            private enabled;
             constructor(spacedName?: string, expectedOrigin?: string);
             length: number;
             key(n: number): Promise<any>;
@@ -98,6 +99,7 @@ declare module Fabrique {
         status?: string;
         key?: string;
         value?: any;
+        length?: number;
     }
     enum StorageCommand {
         init = 0,

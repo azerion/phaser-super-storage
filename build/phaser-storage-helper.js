@@ -132,17 +132,18 @@ var LocalStorage = Fabrique.StorageAdapters.LocalStorage;
                 case StorageCommand.init:
                     source.postMessage({
                         status: 'ok',
-                        command: message.command
+                        command: message.command,
+                        length: storage.length
                     });
                     break;
                 case StorageCommand.getItem:
                     try {
                         var item = storage.getItem(message.key);
-                        console.log('get', message, item, storage);
                         source.postMessage({
                             status: 'ok',
                             command: message.command,
-                            value: item
+                            value: item,
+                            length: storage.length
                         });
                     }
                     catch (e) {
@@ -154,12 +155,8 @@ var LocalStorage = Fabrique.StorageAdapters.LocalStorage;
                         storage.setItem(message.key, message.value);
                         source.postMessage({
                             status: 'ok',
-                            command: message.command
-                        });
-                        source.postMessage({
-                            status: 'ok',
-                            command: StorageCommand.length,
-                            value: storage.length
+                            command: message.command,
+                            length: storage.length
                         });
                     }
                     catch (e) {
@@ -171,12 +168,8 @@ var LocalStorage = Fabrique.StorageAdapters.LocalStorage;
                         storage.removeItem(message.key);
                         source.postMessage({
                             status: 'ok',
-                            command: message.command
-                        });
-                        source.postMessage({
-                            status: 'ok',
-                            command: StorageCommand.length,
-                            value: storage.length
+                            command: message.command,
+                            length: storage.length
                         });
                     }
                     catch (e) {
@@ -189,12 +182,8 @@ var LocalStorage = Fabrique.StorageAdapters.LocalStorage;
                         source.postMessage({
                             status: 'ok',
                             command: message.command,
-                            value: message.value
-                        });
-                        source.postMessage({
-                            status: 'ok',
-                            command: StorageCommand.length,
-                            value: storage.length
+                            value: message.value,
+                            length: storage.length
                         });
                     }
                     catch (e) {
@@ -206,12 +195,8 @@ var LocalStorage = Fabrique.StorageAdapters.LocalStorage;
                         storage.clear();
                         source.postMessage({
                             status: 'ok',
-                            command: message.command
-                        });
-                        source.postMessage({
-                            status: 'ok',
-                            command: StorageCommand.length,
-                            value: storage.length
+                            command: message.command,
+                            length: storage.length
                         });
                     }
                     catch (e) {
@@ -223,7 +208,8 @@ var LocalStorage = Fabrique.StorageAdapters.LocalStorage;
                         source.postMessage({
                             status: 'ok',
                             command: message.command,
-                            value: storage.length
+                            value: storage.length,
+                            length: storage.length
                         });
                     }
                     catch (e) {
@@ -236,7 +222,8 @@ var LocalStorage = Fabrique.StorageAdapters.LocalStorage;
                         source.postMessage({
                             status: 'ok',
                             command: message.command,
-                            value: nkey
+                            value: nkey,
+                            length: storage.length
                         });
                     }
                     catch (e) {

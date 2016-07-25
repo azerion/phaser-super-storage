@@ -83,17 +83,25 @@ var Fabrique;
          */
         var IframeStorage = (function () {
             function IframeStorage(spacedName, expectedOrigin) {
+                var _this = this;
                 if (spacedName === void 0) { spacedName = ''; }
                 if (expectedOrigin === void 0) { expectedOrigin = '*'; }
                 this.namespace = '';
                 this.expectedOrigin = '';
                 this.storageLength = 0;
+                this.enabled = true;
                 if (spacedName !== '') {
                     this.setNamespace(spacedName);
                 }
                 this.expectedOrigin = expectedOrigin;
                 this.sendMessage({
-                    command: Fabrique.StorageCommand.length
+                    command: Fabrique.StorageCommand.init
+                }).then(function () {
+                    _this.sendMessage({
+                        command: Fabrique.StorageCommand.length
+                    });
+                }).catch(function () {
+                    _this.enabled = false;
                 });
             }
             Object.defineProperty(IframeStorage.prototype, "length", {
@@ -142,25 +150,41 @@ var Fabrique;
             IframeStorage.prototype.sendMessage = function (message) {
                 var _this = this;
                 return new Promise(function (resolve, reject) {
+                    if (!_this.enabled) {
+                        reject('Messaging not enabled!');
+                    }
                     var messageChannel = new MessageChannel();
                     messageChannel.port1.onmessage = function (event) {
+                        console.log('Frame received message', event);
                         var message = Fabrique.StorageUtils.validateMessage(event.data);
                         if (message.status === undefined || message.status !== 'ok') {
                             reject(message.value);
                         }
+                        if (message.length !== undefined) {
+                            _this.storageLength = message.length;
+                        }
                         switch (message.command) {
                             case Fabrique.StorageCommand.setNamespace:
                                 _this.namespace = message.value + ':';
-                                resolve();
-                                break;
                             case Fabrique.StorageCommand.getItem:
+                            case Fabrique.StorageCommand.length:
+                            case Fabrique.StorageCommand.key:
                                 resolve(message.value);
                                 break;
-                            case Fabrique.StorageCommand.length:
-                                _this.storageLength = message.value;
+                            case Fabrique.StorageCommand.setItem:
+                            case Fabrique.StorageCommand.removeItem:
+                            case Fabrique.StorageCommand.clear:
+                                resolve(message.status);
+                                break;
+                            default:
+                                reject(message.value);
+                                break;
                         }
                     };
-                    window.parent.postMessage(message, _this.expectedOrigin, [messageChannel.port2]);
+                    if (_this.enabled) {
+                        console.log('Sending message to parent: ', message);
+                        window.parent.postMessage(message, _this.expectedOrigin, [messageChannel.port2]);
+                    }
                 });
             };
             return IframeStorage;

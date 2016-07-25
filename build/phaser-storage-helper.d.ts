@@ -4,6 +4,7 @@ declare module Fabrique {
         status?: string;
         key?: string;
         value?: any;
+        length?: number;
     }
     enum StorageCommand {
         init = 0,
