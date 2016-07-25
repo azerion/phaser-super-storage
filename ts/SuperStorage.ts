@@ -25,6 +25,14 @@ module Fabrique {
                 this.storage = storageAdapter;
             }
 
+            get forcePromises(): boolean {
+                return this.storage.forcePromises;
+            }
+
+            set forcePromises(forceIt: boolean) {
+                this.storage.forcePromises = forceIt;
+            }
+
             get length(): number {
                 if (this.storage === null) {
                     return 0;
@@ -33,20 +41,20 @@ module Fabrique {
                 return this.storage.length;
             }
             
-            public setNamespace(namedSpace: string): void {
+            public setNamespace(namedSpace: string): void | Promise<void> {
                 if (this.storage !== null) {
-                    this.storage.setNamespace(namedSpace);
+                    return this.storage.setNamespace(namedSpace);
                 }
             }
 
-            public key(n: number): string {
+            public key(n: number): string | Promise<string> {
                 if (this.storage === null) {
                     return '';
                 }
                 
                 return this.storage.key(n);
             }
-            public getItem(key: string): any {
+            public getItem(key: string): any | Promise<any> {
                 if (this.storage === null) {
                     return null;
                 }
@@ -54,21 +62,21 @@ module Fabrique {
                 return this.storage.getItem(key)
             }
 
-            public setItem(key: string, value: string): void {
+            public setItem(key: string, value: string): void | Promise<void> {
                 if (this.storage !== null) {
-                    this.storage.setItem(key, value);
+                    return this.storage.setItem(key, value);
                 }
             }
 
-            public removeItem(key: string): void {
+            public removeItem(key: string): void | Promise<void> {
                 if (this.storage !== null) {
-                    this.storage.removeItem(key);
+                    return this.storage.removeItem(key);
                 }
             }
 
-            public clear(): void {
+            public clear(): void | Promise<void> {
                 if (this.storage !== null) {
-                    this.storage.clear();
+                    return this.storage.clear();
                 }
             }
         }

@@ -29,14 +29,16 @@ declare module Fabrique {
          */
         class LocalStorage implements IStorage {
             namespace: string;
+            forcePromises: boolean;
             constructor(spacedName?: string);
             length: number;
-            key(n: number): any;
-            getItem(key: string): any;
-            setItem(key: string, value: any): void;
-            removeItem(key: string): void;
-            clear(): void;
-            setNamespace(spacedName: string): void;
+            key(n: number): any | Promise<any>;
+            getItem(key: string): any | Promise<any>;
+            setItem(key: string, value: any): void | Promise<void>;
+            removeItem(key: string): void | Promise<void>;
+            clear(): void | Promise<void>;
+            setNamespace(spacedName: string): void | Promise<void>;
+            private promisefy(value);
         }
     }
 }
@@ -46,6 +48,7 @@ import LocalStorage = Fabrique.StorageAdapters.LocalStorage;
 declare module Fabrique {
     module StorageAdapters {
         interface IStorage {
+            forcePromises: boolean;
             length: number;
             namespace: string;
             getItem(key: string): any | Promise<any>;

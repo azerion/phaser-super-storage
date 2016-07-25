@@ -2,6 +2,8 @@ module Fabrique {
     export module StorageAdapters {
         export interface IStorage
         {
+            forcePromises: boolean;
+
             //The amount of items in the storage
             length: number;
 

@@ -7,22 +7,25 @@ declare module Fabrique {
             private keys;
             private reg;
             namespace: string;
+            forcePromises: boolean;
             constructor(spacedName?: string);
             length: number;
-            key(n: number): any;
-            getItem(key: string): string;
-            setItem(key: string, value: any): void;
-            removeItem(key: string): void;
-            clear(): void;
-            setNamespace(namespace: string): void;
+            key(n: number): any | Promise<any>;
+            getItem(key: string): string | Promise<string>;
+            setItem(key: string, value: any): void | Promise<void>;
+            removeItem(key: string): void | Promise<void>;
+            clear(): void | Promise<void>;
+            setNamespace(namespace: string): void | Promise<void>;
             private getNameSpaceMatches();
             private getCookiesForNameSpace();
+            private promisefy(value);
         }
     }
 }
 declare module Fabrique {
     module StorageAdapters {
         interface IStorage {
+            forcePromises: boolean;
             length: number;
             namespace: string;
             getItem(key: string): any | Promise<any>;
@@ -44,8 +47,10 @@ declare module Fabrique {
             expectedOrigin: string;
             private storageLength;
             private enabled;
+            forcePromises: boolean;
             constructor(spacedName?: string, expectedOrigin?: string);
             length: number;
+            init(): Promise<any>;
             key(n: number): Promise<any>;
             getItem(key: string): Promise<any>;
             setItem(key: string, value: any): Promise<void>;
@@ -63,14 +68,16 @@ declare module Fabrique {
          */
         class LocalStorage implements IStorage {
             namespace: string;
+            forcePromises: boolean;
             constructor(spacedName?: string);
             length: number;
-            key(n: number): any;
-            getItem(key: string): any;
-            setItem(key: string, value: any): void;
-            removeItem(key: string): void;
-            clear(): void;
-            setNamespace(spacedName: string): void;
+            key(n: number): any | Promise<any>;
+            getItem(key: string): any | Promise<any>;
+            setItem(key: string, value: any): void | Promise<void>;
+            removeItem(key: string): void | Promise<void>;
+            clear(): void | Promise<void>;
+            setNamespace(spacedName: string): void | Promise<void>;
+            private promisefy(value);
         }
     }
 }
@@ -83,13 +90,14 @@ declare module Fabrique {
             private storage;
             constructor(game: SuperStorageGame, pluginManager: Phaser.PluginManager);
             setAdapter(storageAdapter: StorageAdapters.IStorage): void;
+            forcePromises: boolean;
             length: number;
-            setNamespace(namedSpace: string): void;
-            key(n: number): string;
-            getItem(key: string): any;
-            setItem(key: string, value: string): void;
-            removeItem(key: string): void;
-            clear(): void;
+            setNamespace(namedSpace: string): void | Promise<void>;
+            key(n: number): string | Promise<string>;
+            getItem(key: string): any | Promise<any>;
+            setItem(key: string, value: string): void | Promise<void>;
+            removeItem(key: string): void | Promise<void>;
+            clear(): void | Promise<void>;
         }
     }
 }

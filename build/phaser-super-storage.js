@@ -1,5 +1,5 @@
 /*!
- * phaser-super-storage - version 0.0.1 
+ * phaser-super-storage - version 0.0.2 
  * A cross platform storage plugin for Phaser
  *
  * OrangeGames
@@ -19,6 +19,7 @@ var Fabrique;
                 if (spacedName === void 0) { spacedName = ''; }
                 this.keys = [];
                 this.namespace = '';
+                this.forcePromises = false;
                 this.setNamespace(spacedName);
             }
             Object.defineProperty(CookieStorage.prototype, "length", {
@@ -30,27 +31,47 @@ var Fabrique;
             });
             CookieStorage.prototype.key = function (n) {
                 var key = this.getNameSpaceMatches()[n];
-                return this.getCookiesForNameSpace()[key] || null;
+                var result = this.getCookiesForNameSpace()[key] || null;
+                if (this.forcePromises) {
+                    return this.promisefy(result);
+                }
+                return result;
             };
             CookieStorage.prototype.getItem = function (key) {
-                return this.getCookiesForNameSpace()[key] || null;
+                var result = this.getCookiesForNameSpace()[key] || null;
+                if (this.forcePromises) {
+                    return this.promisefy(result);
+                }
+                return result;
             };
             CookieStorage.prototype.setItem = function (key, value) {
                 document.cookie = encodeURIComponent(this.namespace + key) + "=" + encodeURIComponent(value) + "; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/";
+                if (this.forcePromises) {
+                    return this.promisefy(null);
+                }
             };
             CookieStorage.prototype.removeItem = function (key) {
                 document.cookie = encodeURIComponent(this.namespace + key) + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
+                if (this.forcePromises) {
+                    return this.promisefy(null);
+                }
             };
             CookieStorage.prototype.clear = function () {
                 var cookies = this.getCookiesForNameSpace();
                 for (var key in cookies) {
                     this.removeItem(key);
                 }
+                if (this.forcePromises) {
+                    return this.promisefy(null);
+                }
             };
             CookieStorage.prototype.setNamespace = function (namespace) {
                 if (namespace) {
                     this.namespace = namespace + ':';
                     this.reg = new RegExp('^' + this.namespace + '[a-zA-Z0-9]*', 'g');
+                }
+                if (this.forcePromises) {
+                    return this.promisefy(namespace);
                 }
             };
             CookieStorage.prototype.getNameSpaceMatches = function () {
@@ -69,6 +90,11 @@ var Fabrique;
                 });
                 return cookies;
             };
+            CookieStorage.prototype.promisefy = function (value) {
+                return new Promise(function (resolve, reject) {
+                    resolve(value);
+                });
+            };
             return CookieStorage;
         })();
         StorageAdapters.CookieStorage = CookieStorage;
@@ -83,27 +109,25 @@ var Fabrique;
          */
         var IframeStorage = (function () {
             function IframeStorage(spacedName, expectedOrigin) {
-                var _this = this;
                 if (spacedName === void 0) { spacedName = ''; }
                 if (expectedOrigin === void 0) { expectedOrigin = '*'; }
                 this.namespace = '';
                 this.expectedOrigin = '';
                 this.storageLength = 0;
-                this.enabled = true;
+                this.enabled = false;
                 if (spacedName !== '') {
                     this.setNamespace(spacedName);
                 }
                 this.expectedOrigin = expectedOrigin;
-                this.sendMessage({
-                    command: Fabrique.StorageCommand.init
-                }).then(function () {
-                    _this.sendMessage({
-                        command: Fabrique.StorageCommand.length
-                    });
-                }).catch(function () {
-                    _this.enabled = false;
-                });
             }
+            Object.defineProperty(IframeStorage.prototype, "forcePromises", {
+                get: function () {
+                    return true;
+                },
+                set: function (v) { },
+                enumerable: true,
+                configurable: true
+            });
             Object.defineProperty(IframeStorage.prototype, "length", {
                 get: function () {
                     return this.storageLength;
@@ -111,6 +135,14 @@ var Fabrique;
                 enumerable: true,
                 configurable: true
             });
+            IframeStorage.prototype.init = function () {
+                var _this = this;
+                return this.sendMessage({
+                    command: Fabrique.StorageCommand.init
+                }).then(function () {
+                    _this.enabled = true;
+                });
+            };
             IframeStorage.prototype.key = function (n) {
                 return this.sendMessage({
                     command: Fabrique.StorageCommand.key,
@@ -149,14 +181,28 @@ var Fabrique;
             };
             IframeStorage.prototype.sendMessage = function (message) {
                 var _this = this;
+                if (message.command === Fabrique.StorageCommand.init) {
+                    var returnedResult = false;
+                }
+                var messageChannel = new MessageChannel();
                 return new Promise(function (resolve, reject) {
-                    if (!_this.enabled) {
+                    if (!_this.enabled && message.command !== Fabrique.StorageCommand.init) {
                         reject('Messaging not enabled!');
                     }
-                    var messageChannel = new MessageChannel();
+                    if (message.command === Fabrique.StorageCommand.init) {
+                        //small timeout to see if stuff is enabled
+                        setTimeout(function () {
+                            if (!returnedResult) {
+                                reject('Unable to get a response in time');
+                            }
+                        }, 1000);
+                    }
                     messageChannel.port1.onmessage = function (event) {
                         console.log('Frame received message', event);
                         var message = Fabrique.StorageUtils.validateMessage(event.data);
+                        if (message.command === Fabrique.StorageCommand.init) {
+                            returnedResult = true;
+                        }
                         if (message.status === undefined || message.status !== 'ok') {
                             reject(message.value);
                         }
@@ -174,6 +220,7 @@ var Fabrique;
                             case Fabrique.StorageCommand.setItem:
                             case Fabrique.StorageCommand.removeItem:
                             case Fabrique.StorageCommand.clear:
+                            case Fabrique.StorageCommand.init:
                                 resolve(message.status);
                                 break;
                             default:
@@ -181,7 +228,7 @@ var Fabrique;
                                 break;
                         }
                     };
-                    if (_this.enabled) {
+                    if (_this.enabled || message.command === Fabrique.StorageCommand.init) {
                         console.log('Sending message to parent: ', message);
                         window.parent.postMessage(message, _this.expectedOrigin, [messageChannel.port2]);
                     }
@@ -203,6 +250,7 @@ var Fabrique;
             function LocalStorage(spacedName) {
                 if (spacedName === void 0) { spacedName = ''; }
                 this.namespace = '';
+                this.forcePromises = false;
                 this.setNamespace(spacedName);
             }
             Object.defineProperty(LocalStorage.prototype, "length", {
@@ -216,16 +264,30 @@ var Fabrique;
             LocalStorage.prototype.key = function (n) {
                 var keys = Object.keys(localStorage);
                 var spacedKeys = Fabrique.StorageUtils.nameSpaceKeyFilter(keys, this.namespace);
-                return localStorage.getItem(spacedKeys[n]);
+                var item = localStorage.getItem(spacedKeys[n]);
+                if (this.forcePromises) {
+                    return this.promisefy(item);
+                }
+                return item;
             };
             LocalStorage.prototype.getItem = function (key) {
-                return localStorage.getItem(this.namespace + key);
+                var item = localStorage.getItem(this.namespace + key);
+                if (this.forcePromises) {
+                    return this.promisefy(item);
+                }
+                return item;
             };
             LocalStorage.prototype.setItem = function (key, value) {
                 localStorage.setItem(this.namespace + key, value);
+                if (this.forcePromises) {
+                    return this.promisefy(null);
+                }
             };
             LocalStorage.prototype.removeItem = function (key) {
                 localStorage.removeItem(this.namespace + key);
+                if (this.forcePromises) {
+                    return this.promisefy(null);
+                }
             };
             LocalStorage.prototype.clear = function () {
                 var keys = Object.keys(localStorage);
@@ -233,11 +295,22 @@ var Fabrique;
                 for (var i = 0; i < spacedKeys.length; i++) {
                     localStorage.removeItem(spacedKeys[i]);
                 }
+                if (this.forcePromises) {
+                    return this.promisefy(null);
+                }
             };
             LocalStorage.prototype.setNamespace = function (spacedName) {
                 if (spacedName) {
                     this.namespace = spacedName + ':';
                 }
+                if (this.forcePromises) {
+                    return this.promisefy(spacedName);
+                }
+            };
+            LocalStorage.prototype.promisefy = function (value) {
+                return new Promise(function (resolve, reject) {
+                    resolve(value);
+                });
             };
             return LocalStorage;
         })();
@@ -270,6 +343,16 @@ var Fabrique;
             SuperStorage.prototype.setAdapter = function (storageAdapter) {
                 this.storage = storageAdapter;
             };
+            Object.defineProperty(SuperStorage.prototype, "forcePromises", {
+                get: function () {
+                    return this.storage.forcePromises;
+                },
+                set: function (forceIt) {
+                    this.storage.forcePromises = forceIt;
+                },
+                enumerable: true,
+                configurable: true
+            });
             Object.defineProperty(SuperStorage.prototype, "length", {
                 get: function () {
                     if (this.storage === null) {
@@ -282,7 +365,7 @@ var Fabrique;
             });
             SuperStorage.prototype.setNamespace = function (namedSpace) {
                 if (this.storage !== null) {
-                    this.storage.setNamespace(namedSpace);
+                    return this.storage.setNamespace(namedSpace);
                 }
             };
             SuperStorage.prototype.key = function (n) {
@@ -299,17 +382,17 @@ var Fabrique;
             };
             SuperStorage.prototype.setItem = function (key, value) {
                 if (this.storage !== null) {
-                    this.storage.setItem(key, value);
+                    return this.storage.setItem(key, value);
                 }
             };
             SuperStorage.prototype.removeItem = function (key) {
                 if (this.storage !== null) {
-                    this.storage.removeItem(key);
+                    return this.storage.removeItem(key);
                 }
             };
             SuperStorage.prototype.clear = function () {
                 if (this.storage !== null) {
-                    this.storage.clear();
+                    return this.storage.clear();
                 }
             };
             return SuperStorage;

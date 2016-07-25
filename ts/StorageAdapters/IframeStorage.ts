@@ -10,7 +10,13 @@ module Fabrique {
             
             private storageLength: number = 0;
 
-            private enabled: boolean = true;
+            private enabled: boolean = false;
+
+            get forcePromises(): boolean {
+                return true;
+            }
+
+            set forcePromises(v: boolean) {}
 
             constructor(spacedName: string = '', expectedOrigin: string = '*') {
                 if (spacedName !== '') {
@@ -18,20 +24,18 @@ module Fabrique {
                 }
 
                 this.expectedOrigin = expectedOrigin;
-
-                this.sendMessage(<StorageMessage>{
-                    command: StorageCommand.init
-                }).then(() => {
-                    this.sendMessage(<StorageMessage>{
-                        command: StorageCommand.length
-                    })
-                }).catch(() => {
-                    this.enabled = false;
-                });
             }
 
             get length(): number {
                 return this.storageLength;
+            }
+
+            public init(): Promise<any> {
+                return this.sendMessage(<StorageMessage>{
+                    command: StorageCommand.init
+                }).then(() => {
+                    this.enabled = true;
+                });
             }
 
             public key(n: number): Promise<any> {
@@ -77,16 +81,34 @@ module Fabrique {
             }
 
             private sendMessage(message: StorageMessage): Promise<any> {
+                if (message.command === StorageCommand.init) {
+                    var returnedResult: boolean = false;
+                }
+
+                var messageChannel:MessageChannel = new MessageChannel();
+
                 return new Promise((resolve : (value?: any | Thenable<any>) => void, reject: (error?: any) => void) => {
-                    if (!this.enabled) {
+                    if (!this.enabled && message.command !== StorageCommand.init) {
                         reject('Messaging not enabled!');
                     }
-                    var messageChannel:MessageChannel = new MessageChannel();
+
+                    if (message.command === StorageCommand.init) {
+                        //small timeout to see if stuff is enabled
+                        setTimeout(() => {
+                            if (!returnedResult) {
+                                reject('Unable to get a response in time');
+                            }
+                        }, 1000);
+                    }
 
                     messageChannel.port1.onmessage = (event: MessageEvent) => {
                         console.log('Frame received message', event);
 
                         let message: Fabrique.StorageMessage = StorageUtils.validateMessage(event.data);
+
+                        if (message.command === StorageCommand.init) {
+                            returnedResult = true;
+                        }
 
                         if (message.status === undefined || message.status !== 'ok') {
                             reject(message.value);
@@ -107,6 +129,7 @@ module Fabrique {
                             case StorageCommand.setItem:
                             case StorageCommand.removeItem:
                             case StorageCommand.clear:
+                            case StorageCommand.init:
                                 resolve(message.status);
                                 break;
                             default:
@@ -115,7 +138,7 @@ module Fabrique {
                         }
                     };
 
-                    if (this.enabled) {
+                    if (this.enabled || message.command === StorageCommand.init) {
                         console.log('Sending message to parent: ', message);
                         window.parent.postMessage(message, this.expectedOrigin, [messageChannel.port2]);
                     }

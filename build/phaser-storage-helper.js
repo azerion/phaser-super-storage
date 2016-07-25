@@ -1,5 +1,5 @@
 /*!
- * phaser-super-storage - version 0.0.1 
+ * phaser-super-storage - version 0.0.2 
  * A cross platform storage plugin for Phaser
  *
  * OrangeGames
@@ -60,6 +60,7 @@ var Fabrique;
             function LocalStorage(spacedName) {
                 if (spacedName === void 0) { spacedName = ''; }
                 this.namespace = '';
+                this.forcePromises = false;
                 this.setNamespace(spacedName);
             }
             Object.defineProperty(LocalStorage.prototype, "length", {
@@ -73,16 +74,30 @@ var Fabrique;
             LocalStorage.prototype.key = function (n) {
                 var keys = Object.keys(localStorage);
                 var spacedKeys = Fabrique.StorageUtils.nameSpaceKeyFilter(keys, this.namespace);
-                return localStorage.getItem(spacedKeys[n]);
+                var item = localStorage.getItem(spacedKeys[n]);
+                if (this.forcePromises) {
+                    return this.promisefy(item);
+                }
+                return item;
             };
             LocalStorage.prototype.getItem = function (key) {
-                return localStorage.getItem(this.namespace + key);
+                var item = localStorage.getItem(this.namespace + key);
+                if (this.forcePromises) {
+                    return this.promisefy(item);
+                }
+                return item;
             };
             LocalStorage.prototype.setItem = function (key, value) {
                 localStorage.setItem(this.namespace + key, value);
+                if (this.forcePromises) {
+                    return this.promisefy(null);
+                }
             };
             LocalStorage.prototype.removeItem = function (key) {
                 localStorage.removeItem(this.namespace + key);
+                if (this.forcePromises) {
+                    return this.promisefy(null);
+                }
             };
             LocalStorage.prototype.clear = function () {
                 var keys = Object.keys(localStorage);
@@ -90,11 +105,22 @@ var Fabrique;
                 for (var i = 0; i < spacedKeys.length; i++) {
                     localStorage.removeItem(spacedKeys[i]);
                 }
+                if (this.forcePromises) {
+                    return this.promisefy(null);
+                }
             };
             LocalStorage.prototype.setNamespace = function (spacedName) {
                 if (spacedName) {
                     this.namespace = spacedName + ':';
                 }
+                if (this.forcePromises) {
+                    return this.promisefy(spacedName);
+                }
+            };
+            LocalStorage.prototype.promisefy = function (value) {
+                return new Promise(function (resolve, reject) {
+                    resolve(value);
+                });
             };
             return LocalStorage;
         })();
