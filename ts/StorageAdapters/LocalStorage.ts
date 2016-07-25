@@ -31,11 +31,11 @@ module Fabrique {
                 localStorage.setItem(this.namespace + key, value);
             }
 
-            public deleteItem(key: string): void {
+            public removeItem(key: string): void {
                 localStorage.removeItem(this.namespace + key);
             }
 
-            public empty(): void {
+            public clear(): void {
                 let keys: string[] = Object.keys(localStorage);
                 let spacedKeys: string[] = StorageUtils.nameSpaceKeyFilter(keys, this.namespace);
 

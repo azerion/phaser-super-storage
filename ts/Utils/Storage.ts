@@ -3,8 +3,7 @@ module Fabrique {
         command: StorageCommand;
         status: string;
         key?: string;
-        value?: string;
-        number?: number;
+        value?: any;
     }
 
     export enum StorageCommand {

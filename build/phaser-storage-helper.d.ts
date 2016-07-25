@@ -6,8 +6,7 @@ declare module Fabrique {
         command: StorageCommand;
         status: string;
         key?: string;
-        value?: string;
-        number?: number;
+        value?: any;
     }
     enum StorageCommand {
         init = 0,
@@ -37,8 +36,8 @@ declare module Fabrique {
             key(n: number): any;
             getItem(key: string): any;
             setItem(key: string, value: any): void;
-            deleteItem(key: string): void;
-            empty(): void;
+            removeItem(key: string): void;
+            clear(): void;
             setNamespace(spacedName: string): void;
         }
     }
@@ -49,9 +48,10 @@ declare module Fabrique {
             length: number;
             namespace: string;
             getItem(key: string): any;
+            removeItem(key: string): any;
             setItem(key: string, value: any): void;
-            deleteItem(key: string): void;
-            empty(): void;
+            key(n: number): any;
+            clear(): void;
             setNamespace(namespace: string): void;
         }
     }

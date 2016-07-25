@@ -12,8 +12,8 @@ declare module Fabrique {
             key(n: number): any;
             getItem(key: string): string;
             setItem(key: string, value: any): void;
-            deleteItem(key: string): void;
-            empty(): void;
+            removeItem(key: string): void;
+            clear(): void;
             setNamespace(namespace: string): void;
             private getNameSpaceMatches();
             private getCookiesForNameSpace();
@@ -26,9 +26,10 @@ declare module Fabrique {
             length: number;
             namespace: string;
             getItem(key: string): any;
+            removeItem(key: string): any;
             setItem(key: string, value: any): void;
-            deleteItem(key: string): void;
-            empty(): void;
+            key(n: number): any;
+            clear(): void;
             setNamespace(namespace: string): void;
         }
     }
@@ -45,8 +46,8 @@ declare module Fabrique {
             key(n: number): any;
             getItem(key: string): any;
             setItem(key: string, value: any): void;
-            deleteItem(key: string): void;
-            empty(): void;
+            removeItem(key: string): void;
+            clear(): void;
             setNamespace(spacedName: string): void;
         }
     }
@@ -63,8 +64,8 @@ declare module Fabrique {
             key(n: number): any;
             getItem(key: string): any;
             setItem(key: string, value: any): void;
-            deleteItem(key: string): void;
-            empty(): void;
+            removeItem(key: string): void;
+            clear(): void;
             setNamespace(spacedName: string): void;
         }
     }
@@ -79,11 +80,11 @@ declare module Fabrique {
             constructor(game: SuperStorageGame, pluginManager: Phaser.PluginManager);
             setAdapter(storageAdapter: StorageAdapters.IStorage): void;
             length: number;
-            setNamespace(namespace: string): void;
+            setNamespace(namedSpace: string): void;
             key(n: number): string;
-            getItem(): any;
-            setItem(): void;
-            removeItem(): void;
+            getItem(key: string): any;
+            setItem(key: string, value: string): void;
+            removeItem(key: string): void;
             clear(): void;
         }
     }
@@ -93,8 +94,7 @@ declare module Fabrique {
         command: StorageCommand;
         status: string;
         key?: string;
-        value?: string;
-        number?: number;
+        value?: any;
     }
     enum StorageCommand {
         init = 0,

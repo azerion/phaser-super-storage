@@ -11,14 +11,16 @@ module Fabrique {
             //Get an item from the storage
             getItem(key: string): any;
 
+            //remove an item from the localStorage
+            removeItem(key: string): any;
+
             //Set an item in the storage
             setItem(key: string, value:any): void;
 
-            //Remove an item from the storage
-            deleteItem(key: string): void;
+            key(n: number): any;
 
             //empty the (namespaced) storage
-            empty(): void;
+            clear(): void;
 
             setNamespace(namespace: string): void;
         }

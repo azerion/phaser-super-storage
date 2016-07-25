@@ -3,7 +3,7 @@
  * A cross platform storage plugin for Phaser
  *
  * OrangeGames
- * Build at 22-07-2016
+ * Build at 25-07-2016
  * Released under MIT License 
  */
 
@@ -38,13 +38,13 @@ var Fabrique;
             CookieStorage.prototype.setItem = function (key, value) {
                 document.cookie = encodeURIComponent(this.namespace + key) + "=" + encodeURIComponent(value) + "; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/";
             };
-            CookieStorage.prototype.deleteItem = function (key) {
+            CookieStorage.prototype.removeItem = function (key) {
                 document.cookie = encodeURIComponent(this.namespace + key) + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
             };
-            CookieStorage.prototype.empty = function () {
+            CookieStorage.prototype.clear = function () {
                 var cookies = this.getCookiesForNameSpace();
                 for (var key in cookies) {
-                    this.deleteItem(key);
+                    this.removeItem(key);
                 }
             };
             CookieStorage.prototype.setNamespace = function (namespace) {
@@ -106,10 +106,10 @@ var Fabrique;
             IframeStorage.prototype.setItem = function (key, value) {
                 localStorage.setItem(this.namespace + key, value);
             };
-            IframeStorage.prototype.deleteItem = function (key) {
+            IframeStorage.prototype.removeItem = function (key) {
                 localStorage.removeItem(this.namespace + key);
             };
-            IframeStorage.prototype.empty = function () {
+            IframeStorage.prototype.clear = function () {
                 var keys = Object.keys(localStorage);
                 var spacedKeys = Fabrique.StorageUtils.nameSpaceKeyFilter(keys, this.namespace);
                 for (var i = 0; i < spacedKeys.length; i++) {
@@ -158,10 +158,10 @@ var Fabrique;
             LocalStorage.prototype.setItem = function (key, value) {
                 localStorage.setItem(this.namespace + key, value);
             };
-            LocalStorage.prototype.deleteItem = function (key) {
+            LocalStorage.prototype.removeItem = function (key) {
                 localStorage.removeItem(this.namespace + key);
             };
-            LocalStorage.prototype.empty = function () {
+            LocalStorage.prototype.clear = function () {
                 var keys = Object.keys(localStorage);
                 var spacedKeys = Fabrique.StorageUtils.nameSpaceKeyFilter(keys, this.namespace);
                 for (var i = 0; i < spacedKeys.length; i++) {
@@ -206,23 +206,45 @@ var Fabrique;
             };
             Object.defineProperty(SuperStorage.prototype, "length", {
                 get: function () {
-                    return 0;
+                    if (this.storage === null) {
+                        return 0;
+                    }
+                    return this.storage.length;
                 },
                 enumerable: true,
                 configurable: true
             });
-            SuperStorage.prototype.setNamespace = function (namespace) {
+            SuperStorage.prototype.setNamespace = function (namedSpace) {
+                if (this.storage !== null) {
+                    this.storage.setNamespace(namedSpace);
+                }
             };
             SuperStorage.prototype.key = function (n) {
-                return '';
+                if (this.storage === null) {
+                    return '';
+                }
+                return this.storage.key(n);
             };
-            SuperStorage.prototype.getItem = function () {
+            SuperStorage.prototype.getItem = function (key) {
+                if (this.storage === null) {
+                    return null;
+                }
+                return this.storage.getItem(key);
             };
-            SuperStorage.prototype.setItem = function () {
+            SuperStorage.prototype.setItem = function (key, value) {
+                if (this.storage !== null) {
+                    this.storage.setItem(key, value);
+                }
             };
-            SuperStorage.prototype.removeItem = function () {
+            SuperStorage.prototype.removeItem = function (key) {
+                if (this.storage !== null) {
+                    this.storage.removeItem(key);
+                }
             };
             SuperStorage.prototype.clear = function () {
+                if (this.storage !== null) {
+                    this.storage.clear();
+                }
             };
             return SuperStorage;
         })(Phaser.Plugin);

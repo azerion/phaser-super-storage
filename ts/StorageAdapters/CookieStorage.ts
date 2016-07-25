@@ -36,14 +36,14 @@ module Fabrique {
                 document.cookie = encodeURIComponent(this.namespace + key) + "=" + encodeURIComponent(value) + "; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/";
             }
 
-            public deleteItem(key: string): void {
+            public removeItem(key: string): void {
                 document.cookie = encodeURIComponent(this.namespace + key) + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
             }
 
-            public empty(): void {
+            public clear(): void {
                 let cookies: CookieStore = this.getCookiesForNameSpace();
                 for (var key in cookies) {
-                    this.deleteItem(key);
+                    this.removeItem(key);
                 }
             }
 
