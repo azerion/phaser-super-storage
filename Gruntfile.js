@@ -87,6 +87,12 @@ module.exports = function (grunt) {
                 }
             }
         },
+        concat: {
+            dist: {
+                src: ['vendor/es6-promise.d.ts', 'build/<%= pkg.name %>.d.ts'],
+                dest: 'build/<%= pkg.name %>.d.ts'
+            }
+        },
         clean: {
             dist: ['build']
         }
@@ -96,6 +102,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-banner');
     grunt.loadNpmTasks('grunt-typescript');
+    grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-contrib-watch');
 
@@ -105,6 +112,7 @@ module.exports = function (grunt) {
         'typescript:dist',//Run typescript on the preprocessed files, for dist (client)
         'typescript:helper',
         'uglify:dist',    //Minify everything
+        'concat:dist',    //Minify everything
         'usebanner:dist'    //Minify everything
     ]);
 
