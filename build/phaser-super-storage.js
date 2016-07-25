@@ -82,44 +82,86 @@ var Fabrique;
          * Storage driver for browser's localStorage
          */
         var IframeStorage = (function () {
-            function IframeStorage(spacedName) {
+            function IframeStorage(spacedName, expectedOrigin) {
                 if (spacedName === void 0) { spacedName = ''; }
+                if (expectedOrigin === void 0) { expectedOrigin = '*'; }
                 this.namespace = '';
-                this.setNamespace(spacedName);
+                this.expectedOrigin = '';
+                this.storageLength = 0;
+                if (spacedName !== '') {
+                    this.setNamespace(spacedName);
+                }
+                this.expectedOrigin = expectedOrigin;
+                this.sendMessage({
+                    command: Fabrique.StorageCommand.length
+                });
             }
             Object.defineProperty(IframeStorage.prototype, "length", {
                 get: function () {
-                    var keys = Object.keys(localStorage);
-                    return Fabrique.StorageUtils.nameSpaceKeyFilter(keys, this.namespace).length;
+                    return this.storageLength;
                 },
                 enumerable: true,
                 configurable: true
             });
             IframeStorage.prototype.key = function (n) {
-                var keys = Object.keys(localStorage);
-                var spacedKeys = Fabrique.StorageUtils.nameSpaceKeyFilter(keys, this.namespace);
-                return localStorage.getItem(spacedKeys[n]);
+                return this.sendMessage({
+                    command: Fabrique.StorageCommand.key,
+                    value: n
+                });
             };
             IframeStorage.prototype.getItem = function (key) {
-                return localStorage.getItem(this.namespace + key);
+                return this.sendMessage({
+                    command: Fabrique.StorageCommand.getItem,
+                    key: key
+                });
             };
             IframeStorage.prototype.setItem = function (key, value) {
-                localStorage.setItem(this.namespace + key, value);
+                return this.sendMessage({
+                    command: Fabrique.StorageCommand.setItem,
+                    key: key,
+                    value: value
+                });
             };
             IframeStorage.prototype.removeItem = function (key) {
-                localStorage.removeItem(this.namespace + key);
+                return this.sendMessage({
+                    command: Fabrique.StorageCommand.removeItem,
+                    key: key
+                });
             };
             IframeStorage.prototype.clear = function () {
-                var keys = Object.keys(localStorage);
-                var spacedKeys = Fabrique.StorageUtils.nameSpaceKeyFilter(keys, this.namespace);
-                for (var i = 0; i < spacedKeys.length; i++) {
-                    localStorage.removeItem(spacedKeys[i]);
-                }
+                return this.sendMessage({
+                    command: Fabrique.StorageCommand.clear
+                });
             };
             IframeStorage.prototype.setNamespace = function (spacedName) {
-                if (spacedName) {
-                    this.namespace = spacedName + ':';
-                }
+                return this.sendMessage({
+                    command: Fabrique.StorageCommand.setNamespace,
+                    value: spacedName
+                });
+            };
+            IframeStorage.prototype.sendMessage = function (message) {
+                var _this = this;
+                return new Promise(function (resolve, reject) {
+                    var messageChannel = new MessageChannel();
+                    messageChannel.port1.onmessage = function (event) {
+                        var message = Fabrique.StorageUtils.validateMessage(event.data);
+                        if (message.status === undefined || message.status !== 'ok') {
+                            reject(message.value);
+                        }
+                        switch (message.command) {
+                            case Fabrique.StorageCommand.setNamespace:
+                                _this.namespace = message.value + ':';
+                                resolve();
+                                break;
+                            case Fabrique.StorageCommand.getItem:
+                                resolve(message.value);
+                                break;
+                            case Fabrique.StorageCommand.length:
+                                _this.storageLength = message.value;
+                        }
+                    };
+                    window.parent.postMessage(message, _this.expectedOrigin, [messageChannel.port2]);
+                });
             };
             return IframeStorage;
         })();

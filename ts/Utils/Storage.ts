@@ -1,9 +1,10 @@
 module Fabrique {
     export interface StorageMessage {
         command: StorageCommand;
-        status: string;
+        status?: string;
         key?: string;
         value?: any;
+        length?: number;
     }
 
     export enum StorageCommand {

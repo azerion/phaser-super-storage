@@ -25,12 +25,12 @@ declare module Fabrique {
         interface IStorage {
             length: number;
             namespace: string;
-            getItem(key: string): any;
-            removeItem(key: string): any;
-            setItem(key: string, value: any): void;
-            key(n: number): any;
-            clear(): void;
-            setNamespace(namespace: string): void;
+            getItem(key: string): any | Promise<any>;
+            removeItem(key: string): any | Promise<any>;
+            setItem(key: string, value: any): void | Promise<void>;
+            key(n: number): any | Promise<any>;
+            clear(): void | Promise<void>;
+            setNamespace(namespace: string): void | Promise<void>;
         }
     }
 }
@@ -41,14 +41,17 @@ declare module Fabrique {
          */
         class IframeStorage implements IStorage {
             namespace: string;
-            constructor(spacedName?: string);
+            expectedOrigin: string;
+            private storageLength;
+            constructor(spacedName?: string, expectedOrigin?: string);
             length: number;
-            key(n: number): any;
-            getItem(key: string): any;
-            setItem(key: string, value: any): void;
-            removeItem(key: string): void;
-            clear(): void;
-            setNamespace(spacedName: string): void;
+            key(n: number): Promise<any>;
+            getItem(key: string): Promise<any>;
+            setItem(key: string, value: any): Promise<void>;
+            removeItem(key: string): Promise<void>;
+            clear(): Promise<void>;
+            setNamespace(spacedName: string): Promise<void>;
+            private sendMessage(message);
         }
     }
 }
@@ -92,7 +95,7 @@ declare module Fabrique {
 declare module Fabrique {
     interface StorageMessage {
         command: StorageCommand;
-        status: string;
+        status?: string;
         key?: string;
         value?: any;
     }

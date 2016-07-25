@@ -7,134 +7,6 @@
  * Released under MIT License 
  */
 
-var StorageCommand = Fabrique.StorageCommand;
-var StorageUtils = Fabrique.StorageUtils;
-var LocalStorage = Fabrique.StorageAdapters.LocalStorage;
-(function () {
-    var gameOrigin = window.gameOrigin || '*';
-    var localStorageSupported = StorageUtils.isLocalStorageSupport();
-    var storage = localStorageSupported ? new LocalStorage() : null;
-    window.addEventListener('message', function (event) {
-        if (gameOrigin !== '*' && event.origin !== gameOrigin) {
-            return;
-        }
-        var message = StorageUtils.validateMessage(event.data);
-        var source = event.source;
-        var sendError = function (command, message) {
-            source.postMessage({
-                status: 'error',
-                command: command,
-                result: message
-            }, gameOrigin);
-        };
-        if (message) {
-            if (!localStorageSupported) {
-                sendError(message.command, 'localStorage not supported');
-            }
-            switch (message.command) {
-                case StorageCommand.init:
-                    source.postMessage({
-                        status: 'ok',
-                        command: message.command
-                    }, gameOrigin);
-                    break;
-                case StorageCommand.getItem:
-                    try {
-                        var item = storage.getItem(message.key);
-                        source.postMessage({
-                            status: 'ok',
-                            command: message.command,
-                            value: item
-                        }, gameOrigin);
-                    }
-                    catch (e) {
-                        sendError(message.command, e.message);
-                    }
-                    break;
-                case StorageCommand.setItem:
-                    try {
-                        storage.setItem(message.key, message.value);
-                        source.postMessage({
-                            status: 'ok',
-                            command: message.command
-                        }, gameOrigin);
-                    }
-                    catch (e) {
-                        sendError(message.command, e.message);
-                    }
-                    break;
-                case StorageCommand.removeItem:
-                    try {
-                        storage.removeItem(message.key);
-                        source.postMessage({
-                            status: 'ok',
-                            command: message.command
-                        }, gameOrigin);
-                    }
-                    catch (e) {
-                        sendError(message.command, e.message);
-                    }
-                    break;
-                case StorageCommand.setNamespace:
-                    try {
-                        storage.setNamespace(message.value);
-                        source.postMessage({
-                            status: 'ok',
-                            command: message.command
-                        }, gameOrigin);
-                    }
-                    catch (e) {
-                        sendError(message.command, e.message);
-                    }
-                    break;
-                case StorageCommand.clear:
-                    try {
-                        storage.clear();
-                        source.postMessage({
-                            status: 'ok',
-                            command: message.command
-                        }, gameOrigin);
-                    }
-                    catch (e) {
-                        sendError(message.command, e.message);
-                    }
-                    break;
-                case StorageCommand.length:
-                    try {
-                        var length_1 = storage.length;
-                        source.postMessage({
-                            status: 'ok',
-                            command: message.command,
-                            value: length_1
-                        }, gameOrigin);
-                    }
-                    catch (e) {
-                        sendError(message.command, e.message);
-                    }
-                    break;
-                case StorageCommand.key:
-                    try {
-                        var nkey = storage.key(message.value);
-                        source.postMessage({
-                            status: 'ok',
-                            command: message.command,
-                            value: nkey
-                        }, gameOrigin);
-                    }
-                    catch (e) {
-                        sendError(message.command, e.message);
-                    }
-                    break;
-                default:
-                    sendError(message.command, 'Command not found');
-                    break;
-            }
-        }
-        else {
-            sendError(message.command, 'Empty message!');
-        }
-    });
-})();
 var Fabrique;
 (function (Fabrique) {
     (function (StorageCommand) {
@@ -229,4 +101,156 @@ var Fabrique;
         StorageAdapters.LocalStorage = LocalStorage;
     })(StorageAdapters = Fabrique.StorageAdapters || (Fabrique.StorageAdapters = {}));
 })(Fabrique || (Fabrique = {}));
+/// <reference path="Storage.ts"/>
+/// <reference path="../StorageAdapters/LocalStorage.ts"/>
+var StorageCommand = Fabrique.StorageCommand;
+var StorageUtils = Fabrique.StorageUtils;
+var LocalStorage = Fabrique.StorageAdapters.LocalStorage;
+(function () {
+    var gameOrigin = window.gameOrigin || '*';
+    var localStorageSupported = StorageUtils.isLocalStorageSupport();
+    var storage = localStorageSupported ? new LocalStorage() : null;
+    window.addEventListener('message', function (event) {
+        console.log('Parent received message', event);
+        if (gameOrigin !== '*' && event.origin !== gameOrigin) {
+            return;
+        }
+        var message = StorageUtils.validateMessage(event.data);
+        var source = event.ports[0];
+        var sendError = function (command, message) {
+            source.postMessage({
+                status: 'error',
+                command: command,
+                value: message
+            });
+        };
+        if (message) {
+            if (!localStorageSupported) {
+                sendError(message.command, 'localStorage not supported');
+            }
+            switch (message.command) {
+                case StorageCommand.init:
+                    source.postMessage({
+                        status: 'ok',
+                        command: message.command
+                    });
+                    break;
+                case StorageCommand.getItem:
+                    try {
+                        var item = storage.getItem(message.key);
+                        console.log('get', message, item, storage);
+                        source.postMessage({
+                            status: 'ok',
+                            command: message.command,
+                            value: item
+                        });
+                    }
+                    catch (e) {
+                        sendError(message.command, e.message);
+                    }
+                    break;
+                case StorageCommand.setItem:
+                    try {
+                        storage.setItem(message.key, message.value);
+                        source.postMessage({
+                            status: 'ok',
+                            command: message.command
+                        });
+                        source.postMessage({
+                            status: 'ok',
+                            command: StorageCommand.length,
+                            value: storage.length
+                        });
+                    }
+                    catch (e) {
+                        sendError(message.command, e.message);
+                    }
+                    break;
+                case StorageCommand.removeItem:
+                    try {
+                        storage.removeItem(message.key);
+                        source.postMessage({
+                            status: 'ok',
+                            command: message.command
+                        });
+                        source.postMessage({
+                            status: 'ok',
+                            command: StorageCommand.length,
+                            value: storage.length
+                        });
+                    }
+                    catch (e) {
+                        sendError(message.command, e.message);
+                    }
+                    break;
+                case StorageCommand.setNamespace:
+                    try {
+                        storage.setNamespace(message.value);
+                        source.postMessage({
+                            status: 'ok',
+                            command: message.command,
+                            value: message.value
+                        });
+                        source.postMessage({
+                            status: 'ok',
+                            command: StorageCommand.length,
+                            value: storage.length
+                        });
+                    }
+                    catch (e) {
+                        sendError(message.command, e.message);
+                    }
+                    break;
+                case StorageCommand.clear:
+                    try {
+                        storage.clear();
+                        source.postMessage({
+                            status: 'ok',
+                            command: message.command
+                        });
+                        source.postMessage({
+                            status: 'ok',
+                            command: StorageCommand.length,
+                            value: storage.length
+                        });
+                    }
+                    catch (e) {
+                        sendError(message.command, e.message);
+                    }
+                    break;
+                case StorageCommand.length:
+                    try {
+                        source.postMessage({
+                            status: 'ok',
+                            command: message.command,
+                            value: storage.length
+                        });
+                    }
+                    catch (e) {
+                        sendError(message.command, e.message);
+                    }
+                    break;
+                case StorageCommand.key:
+                    try {
+                        var nkey = storage.key(message.value);
+                        source.postMessage({
+                            status: 'ok',
+                            command: message.command,
+                            value: nkey
+                        });
+                    }
+                    catch (e) {
+                        sendError(message.command, e.message);
+                    }
+                    break;
+                default:
+                    sendError(message.command, 'Command not found');
+                    break;
+            }
+        }
+        else {
+            sendError(message.command, 'Empty message!');
+        }
+    });
+})();
 //# sourceMappingURL=phaser-storage-helper.js.map

@@ -5,9 +5,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no" />
 
-    <title>Phaser Super Storage example</title>
-
-    <script type="text/javascript" src="//imasdk.googleapis.com/js/sdkloader/ima3.js"></script>
+    <title>Phaser Super Storage Iframe child</title>
 
     <script type="text/javascript" src="../node_modules/phaser/build/phaser.js"></script>
     <script type="text/javascript" src="../build/phaser-super-storage.js"></script>
@@ -27,15 +25,17 @@
         });
 
         function init() {
-
+            game.storage.setAdapter(new Fabrique.StorageAdapters.IframeStorage('', 'http://test.elkspel.nl'));
         }
 
         function preload() {
-            game.storage.length
+            game.storage.setItem('foo', 'bar');
         }
 
         function create(){
-
+            game.storage.getItem('foo').then(function(result) {
+               console.log(result, game.storage.length);
+            });
         }
     </script>
 </head>

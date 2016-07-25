@@ -78,6 +78,7 @@ module.exports = function (grunt) {
             dist: {
                 files: {
                     'build/<%= pkg.name %>.min.js': [
+                        'vendor/*.js',
                         'build/<%= pkg.name %>.js'
                     ],
                     'build/phaser-storage-helper.min.js': [

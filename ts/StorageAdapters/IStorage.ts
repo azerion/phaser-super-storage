@@ -9,20 +9,20 @@ module Fabrique {
             namespace:string;
 
             //Get an item from the storage
-            getItem(key: string): any;
+            getItem(key: string): any | Promise<any>;
 
             //remove an item from the localStorage
-            removeItem(key: string): any;
+            removeItem(key: string): any | Promise<any>;
 
             //Set an item in the storage
-            setItem(key: string, value:any): void;
+            setItem(key: string, value:any): void | Promise<void>;
 
-            key(n: number): any;
+            key(n: number): any | Promise<any>;
 
             //empty the (namespaced) storage
-            clear(): void;
+            clear(): void | Promise<void>;
 
-            setNamespace(namespace: string): void;
+            setNamespace(namespace: string): void | Promise<void>;
         }
     }
 }

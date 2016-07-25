@@ -1,3 +1,6 @@
+/// <reference path="Storage.ts"/>
+/// <reference path="../StorageAdapters/LocalStorage.ts"/>
+
 import StorageCommand = Fabrique.StorageCommand;
 import StorageUtils = Fabrique.StorageUtils;
 import LocalStorage = Fabrique.StorageAdapters.LocalStorage;
@@ -10,19 +13,21 @@ import LocalStorage = Fabrique.StorageAdapters.LocalStorage;
 
 
     window.addEventListener('message', (event: MessageEvent) => {
+        console.log('Parent received message', event);
+        
         if (gameOrigin !== '*' && event.origin !== gameOrigin) {
             return;
         }
 
         let message: Fabrique.StorageMessage = StorageUtils.validateMessage(event.data);
-        let source: Window = event.source;
+        let source: MessagePort = event.ports[0];
 
         let sendError = (command: StorageCommand, message: string): void => {
             source.postMessage(<Fabrique.StorageMessage>{
                 status: 'error',
                 command: command,
-                result: message
-            }, gameOrigin);
+                value: message
+            });
         };
 
         if (message) { 
@@ -34,8 +39,9 @@ import LocalStorage = Fabrique.StorageAdapters.LocalStorage;
                 case StorageCommand.init:
                     source.postMessage(<Fabrique.StorageMessage>{
                         status: 'ok',
-                        command: message.command
-                    }, gameOrigin);
+                        command: message.command,
+                        length: storage.length
+                    });
                     break;
                 case StorageCommand.getItem:
                     try {
@@ -44,8 +50,9 @@ import LocalStorage = Fabrique.StorageAdapters.LocalStorage;
                         source.postMessage(<Fabrique.StorageMessage>{
                             status: 'ok',
                             command: message.command,
-                            value: item
-                        }, gameOrigin);
+                            value: item,
+                            length: storage.length
+                        });
                     } catch (e) {
                         sendError(message.command, e.message);
                     }
@@ -56,8 +63,9 @@ import LocalStorage = Fabrique.StorageAdapters.LocalStorage;
 
                         source.postMessage(<Fabrique.StorageMessage>{
                             status: 'ok',
-                            command: message.command
-                        }, gameOrigin);
+                            command: message.command,
+                            length: storage.length
+                        });
                     } catch (e) {
                         sendError(message.command, e.message);
                     }
@@ -68,8 +76,9 @@ import LocalStorage = Fabrique.StorageAdapters.LocalStorage;
 
                         source.postMessage(<Fabrique.StorageMessage>{
                             status: 'ok',
-                            command: message.command
-                        }, gameOrigin);
+                            command: message.command,
+                            length: storage.length
+                        });
                     } catch (e) {
                         sendError(message.command, e.message);
                     }
@@ -80,8 +89,10 @@ import LocalStorage = Fabrique.StorageAdapters.LocalStorage;
 
                         source.postMessage(<Fabrique.StorageMessage>{
                             status: 'ok',
-                            command: message.command
-                        }, gameOrigin);
+                            command: message.command,
+                            value: message.value,
+                            length: storage.length
+                        });
                     } catch (e) {
                         sendError(message.command, e.message);
                     }
@@ -92,21 +103,21 @@ import LocalStorage = Fabrique.StorageAdapters.LocalStorage;
 
                         source.postMessage(<Fabrique.StorageMessage>{
                             status: 'ok',
-                            command: message.command
-                        }, gameOrigin);
+                            command: message.command,
+                            length: storage.length
+                        });
                     } catch (e) {
                         sendError(message.command, e.message);
                     }
                     break;
                 case StorageCommand.length:
                     try {
-                        let length: number = storage.length;
-
                         source.postMessage(<Fabrique.StorageMessage>{
                             status: 'ok',
                             command: message.command,
-                            value: length
-                        }, gameOrigin);
+                            value: storage.length,
+                            length: storage.length
+                        });
                     } catch (e) {
                         sendError(message.command, e.message);
                     }
@@ -118,8 +129,9 @@ import LocalStorage = Fabrique.StorageAdapters.LocalStorage;
                         source.postMessage(<Fabrique.StorageMessage>{
                             status: 'ok',
                             command: message.command,
-                            value: nkey
-                        }, gameOrigin);
+                            value: nkey,
+                            length: storage.length
+                        });
                     } catch (e) {
                         sendError(message.command, e.message);
                     }

@@ -1,10 +1,7 @@
-import StorageCommand = Fabrique.StorageCommand;
-import StorageUtils = Fabrique.StorageUtils;
-import LocalStorage = Fabrique.StorageAdapters.LocalStorage;
 declare module Fabrique {
     interface StorageMessage {
         command: StorageCommand;
-        status: string;
+        status?: string;
         key?: string;
         value?: any;
     }
@@ -42,17 +39,20 @@ declare module Fabrique {
         }
     }
 }
+import StorageCommand = Fabrique.StorageCommand;
+import StorageUtils = Fabrique.StorageUtils;
+import LocalStorage = Fabrique.StorageAdapters.LocalStorage;
 declare module Fabrique {
     module StorageAdapters {
         interface IStorage {
             length: number;
             namespace: string;
-            getItem(key: string): any;
-            removeItem(key: string): any;
-            setItem(key: string, value: any): void;
-            key(n: number): any;
-            clear(): void;
-            setNamespace(namespace: string): void;
+            getItem(key: string): any | Promise<any>;
+            removeItem(key: string): any | Promise<any>;
+            setItem(key: string, value: any): void | Promise<void>;
+            key(n: number): any | Promise<any>;
+            clear(): void | Promise<void>;
+            setNamespace(namespace: string): void | Promise<void>;
         }
     }
 }
