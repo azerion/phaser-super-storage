@@ -1,5 +1,5 @@
 /*!
- * phaser-super-storage - version 0.0.5 
+ * phaser-super-storage - version 0.0.6 
  * A cross platform storage plugin for Phaser
  *
  * OrangeGames
@@ -137,7 +137,6 @@ var LocalStorage = Fabrique.StorageAdapters.LocalStorage;
     var localStorageSupported = StorageUtils.isLocalStorageSupport();
     var storage = localStorageSupported ? new LocalStorage() : null;
     window.addEventListener('message', function (event) {
-        console.log('Parent received message', event);
         if (gameOrigin !== '*' && event.origin !== gameOrigin) {
             return;
         }
@@ -150,7 +149,7 @@ var LocalStorage = Fabrique.StorageAdapters.LocalStorage;
                 value: message
             });
         };
-        if (message) {
+        if (null !== message) {
             if (!localStorageSupported) {
                 sendError(message.command, 'localStorage not supported');
             }

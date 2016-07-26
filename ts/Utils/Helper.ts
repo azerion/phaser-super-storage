@@ -13,8 +13,6 @@ import LocalStorage = Fabrique.StorageAdapters.LocalStorage;
 
 
     window.addEventListener('message', (event: MessageEvent) => {
-        console.log('Parent received message', event);
-        
         if (gameOrigin !== '*' && event.origin !== gameOrigin) {
             return;
         }
@@ -30,7 +28,7 @@ import LocalStorage = Fabrique.StorageAdapters.LocalStorage;
             });
         };
 
-        if (message) { 
+        if (null !== message) {
             if (!localStorageSupported) {
                 sendError(message.command, 'localStorage not supported');
             }
@@ -124,7 +122,7 @@ import LocalStorage = Fabrique.StorageAdapters.LocalStorage;
                     break;
                 case StorageCommand.key:
                     try {
-                        let nkey: number = storage.key(message.value);
+                        let nkey: any = storage.key(message.value);
 
                         source.postMessage(<Fabrique.StorageMessage>{
                             status: 'ok',
