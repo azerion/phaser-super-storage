@@ -7,7 +7,7 @@ module Fabrique {
         export class SuperStorage {
             private storage: StorageAdapters.IStorage;
 
-            private static instance: SuperStorage = null
+            private static instance: SuperStorage = null;
 
             constructor(game?: Phaser.Game) {
                 if (undefined !== game) {
@@ -92,6 +92,6 @@ module Fabrique {
 }
 
 
-if (Phaser !== undefined) {
+if ((<any>window).Phaser !== undefined) {
     Phaser.Utils.mixinPrototype(Fabrique.Plugins.SuperStorage, Phaser.Plugin);
 }

@@ -1,5 +1,5 @@
 /*!
- * phaser-super-storage - version 0.0.4 
+ * phaser-super-storage - version 0.0.5 
  * A cross platform storage plugin for Phaser
  *
  * OrangeGames

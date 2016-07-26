@@ -1,5 +1,5 @@
 /*!
- * phaser-super-storage - version 0.0.4 
+ * phaser-super-storage - version 0.0.5 
  * A cross platform storage plugin for Phaser
  *
  * OrangeGames
@@ -404,7 +404,7 @@ var Fabrique;
         Plugins.SuperStorage = SuperStorage;
     })(Plugins = Fabrique.Plugins || (Fabrique.Plugins = {}));
 })(Fabrique || (Fabrique = {}));
-if (Phaser !== undefined) {
+if (window.Phaser !== undefined) {
     Phaser.Utils.mixinPrototype(Fabrique.Plugins.SuperStorage, Phaser.Plugin);
 }
 var Fabrique;
