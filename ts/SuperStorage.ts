@@ -4,15 +4,23 @@ module Fabrique {
             storage: Fabrique.Plugins.SuperStorage;
         }
 
-        export class SuperStorage extends Phaser.Plugin {
+        export class SuperStorage {
             private storage: StorageAdapters.IStorage;
 
-            constructor(game: SuperStorageGame, pluginManager: Phaser.PluginManager) {
-                super(game, pluginManager);
+            private static instance: SuperStorage = null
 
-                Object.defineProperty(game, 'storage', {
-                    value: this
-                });
+            constructor(game?: Phaser.Game) {
+                if (undefined !== game) {
+                    Object.defineProperty(game, 'storage', {
+                        value: this
+                    });
+                } else {
+                    if (SuperStorage.instance === null) {
+                        SuperStorage.instance = this;
+                    } else {
+                        return SuperStorage.instance;
+                    }
+                }
 
                 if (StorageUtils.isLocalStorageSupport()) {
                     this.setAdapter(new StorageAdapters.LocalStorage());
@@ -81,4 +89,9 @@ module Fabrique {
             }
         }
     }
+}
+
+
+if (Phaser !== undefined) {
+    Phaser.Utils.mixinPrototype(Fabrique.Plugins.SuperStorage, Phaser.Plugin);
 }

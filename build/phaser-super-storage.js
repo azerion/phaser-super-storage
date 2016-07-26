@@ -1,9 +1,9 @@
 /*!
- * phaser-super-storage - version 0.0.3 
+ * phaser-super-storage - version 0.0.4 
  * A cross platform storage plugin for Phaser
  *
  * OrangeGames
- * Build at 25-07-2016
+ * Build at 26-07-2016
  * Released under MIT License 
  */
 
@@ -317,22 +317,25 @@ var Fabrique;
         StorageAdapters.LocalStorage = LocalStorage;
     })(StorageAdapters = Fabrique.StorageAdapters || (Fabrique.StorageAdapters = {}));
 })(Fabrique || (Fabrique = {}));
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
 var Fabrique;
 (function (Fabrique) {
     var Plugins;
     (function (Plugins) {
-        var SuperStorage = (function (_super) {
-            __extends(SuperStorage, _super);
-            function SuperStorage(game, pluginManager) {
-                _super.call(this, game, pluginManager);
-                Object.defineProperty(game, 'storage', {
-                    value: this
-                });
+        var SuperStorage = (function () {
+            function SuperStorage(game) {
+                if (undefined !== game) {
+                    Object.defineProperty(game, 'storage', {
+                        value: this
+                    });
+                }
+                else {
+                    if (SuperStorage.instance === null) {
+                        SuperStorage.instance = this;
+                    }
+                    else {
+                        return SuperStorage.instance;
+                    }
+                }
                 if (Fabrique.StorageUtils.isLocalStorageSupport()) {
                     this.setAdapter(new Fabrique.StorageAdapters.LocalStorage());
                 }
@@ -395,11 +398,15 @@ var Fabrique;
                     return this.storage.clear();
                 }
             };
+            SuperStorage.instance = null;
             return SuperStorage;
-        })(Phaser.Plugin);
+        })();
         Plugins.SuperStorage = SuperStorage;
     })(Plugins = Fabrique.Plugins || (Fabrique.Plugins = {}));
 })(Fabrique || (Fabrique = {}));
+if (Phaser !== undefined) {
+    Phaser.Utils.mixinPrototype(Fabrique.Plugins.SuperStorage, Phaser.Plugin);
+}
 var Fabrique;
 (function (Fabrique) {
     (function (StorageCommand) {

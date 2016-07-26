@@ -1,9 +1,9 @@
 /*!
- * phaser-super-storage - version 0.0.3 
+ * phaser-super-storage - version 0.0.4 
  * A cross platform storage plugin for Phaser
  *
  * OrangeGames
- * Build at 25-07-2016
+ * Build at 26-07-2016
  * Released under MIT License 
  */
 

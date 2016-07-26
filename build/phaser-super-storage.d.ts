@@ -171,9 +171,10 @@ declare module Fabrique {
         interface SuperStorageGame extends Phaser.Game {
             storage: Fabrique.Plugins.SuperStorage;
         }
-        class SuperStorage extends Phaser.Plugin {
+        class SuperStorage {
             private storage;
-            constructor(game: SuperStorageGame, pluginManager: Phaser.PluginManager);
+            private static instance;
+            constructor(game?: Phaser.Game);
             setAdapter(storageAdapter: StorageAdapters.IStorage): void;
             forcePromises: boolean;
             length: number;
