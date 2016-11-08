@@ -1,5 +1,5 @@
 module Fabrique {
-    export interface StorageMessage {
+    export interface IStorageMessage {
         command: StorageCommand;
         status?: string;
         key?: string;
@@ -26,12 +26,14 @@ module Fabrique {
                     localStorage.removeItem('testingLocalStorage');
                     return true;
                 }
-            } catch (e) {}
+            } catch (e) {
+                return false;
+            }
 
             return false;
         }
 
-        public static validateMessage(data: StorageMessage): StorageMessage {
+        public static validateMessage(data: IStorageMessage): IStorageMessage {
             if (data.hasOwnProperty('command')) {
                 return data;
             }
@@ -39,8 +41,7 @@ module Fabrique {
             return null;
         }
 
-        public static nameSpaceKeyFilter(keys: string[], namespace: string): string[]
-        {
+        public static nameSpaceKeyFilter(keys: string[], namespace: string): string[] {
             return keys.filter((keyName: string) => {
                 return (keyName.substring(0, namespace.length) === namespace);
             });

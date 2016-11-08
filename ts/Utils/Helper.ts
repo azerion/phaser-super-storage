@@ -1,6 +1,3 @@
-/// <reference path="Storage.ts"/>
-/// <reference path="../StorageAdapters/LocalStorage.ts"/>
-
 import StorageCommand = Fabrique.StorageCommand;
 import StorageUtils = Fabrique.StorageUtils;
 import LocalStorage = Fabrique.StorageAdapters.LocalStorage;
@@ -8,23 +5,21 @@ import LocalStorage = Fabrique.StorageAdapters.LocalStorage;
 (() => {
     let gameOrigin: string = (<any>window).gameOrigin || '*';
     let localStorageSupported: boolean = StorageUtils.isLocalStorageSupport();
-    let storage = localStorageSupported ? new LocalStorage() : null;
-
-
+    let storage: LocalStorage = localStorageSupported ? new LocalStorage() : null;
 
     window.addEventListener('message', (event: MessageEvent) => {
         if (gameOrigin !== '*' && event.origin !== gameOrigin) {
             return;
         }
 
-        let message: Fabrique.StorageMessage = StorageUtils.validateMessage(event.data);
+        let message: Fabrique.IStorageMessage = StorageUtils.validateMessage(event.data);
         let source: MessagePort = event.ports[0];
 
-        let sendError = (command: StorageCommand, message: string): void => {
-            source.postMessage(<Fabrique.StorageMessage>{
+        let sendError: (command: StorageCommand, message: string) => void  = (command: StorageCommand, errorMessage: string): void => {
+            source.postMessage(<Fabrique.IStorageMessage>{
                 status: 'error',
                 command: command,
-                value: message
+                value: errorMessage
             });
         };
 
@@ -35,7 +30,7 @@ import LocalStorage = Fabrique.StorageAdapters.LocalStorage;
 
             switch (message.command) {
                 case StorageCommand.init:
-                    source.postMessage(<Fabrique.StorageMessage>{
+                    source.postMessage(<Fabrique.IStorageMessage>{
                         status: 'ok',
                         command: message.command,
                         length: storage.length
@@ -43,9 +38,9 @@ import LocalStorage = Fabrique.StorageAdapters.LocalStorage;
                     break;
                 case StorageCommand.getItem:
                     try {
-                        let item = storage.getItem(message.key);
+                        let item: string = storage.getItem(message.key);
 
-                        source.postMessage(<Fabrique.StorageMessage>{
+                        source.postMessage(<Fabrique.IStorageMessage>{
                             status: 'ok',
                             command: message.command,
                             value: item,
@@ -59,7 +54,7 @@ import LocalStorage = Fabrique.StorageAdapters.LocalStorage;
                     try {
                         storage.setItem(message.key, message.value);
 
-                        source.postMessage(<Fabrique.StorageMessage>{
+                        source.postMessage(<Fabrique.IStorageMessage>{
                             status: 'ok',
                             command: message.command,
                             length: storage.length
@@ -72,7 +67,7 @@ import LocalStorage = Fabrique.StorageAdapters.LocalStorage;
                     try {
                         storage.removeItem(message.key);
 
-                        source.postMessage(<Fabrique.StorageMessage>{
+                        source.postMessage(<Fabrique.IStorageMessage>{
                             status: 'ok',
                             command: message.command,
                             length: storage.length
@@ -85,7 +80,7 @@ import LocalStorage = Fabrique.StorageAdapters.LocalStorage;
                     try {
                         storage.setNamespace(message.value);
 
-                        source.postMessage(<Fabrique.StorageMessage>{
+                        source.postMessage(<Fabrique.IStorageMessage>{
                             status: 'ok',
                             command: message.command,
                             value: message.value,
@@ -99,7 +94,7 @@ import LocalStorage = Fabrique.StorageAdapters.LocalStorage;
                     try {
                         storage.clear();
 
-                        source.postMessage(<Fabrique.StorageMessage>{
+                        source.postMessage(<Fabrique.IStorageMessage>{
                             status: 'ok',
                             command: message.command,
                             length: storage.length
@@ -110,7 +105,7 @@ import LocalStorage = Fabrique.StorageAdapters.LocalStorage;
                     break;
                 case StorageCommand.length:
                     try {
-                        source.postMessage(<Fabrique.StorageMessage>{
+                        source.postMessage(<Fabrique.IStorageMessage>{
                             status: 'ok',
                             command: message.command,
                             value: storage.length,
@@ -124,7 +119,7 @@ import LocalStorage = Fabrique.StorageAdapters.LocalStorage;
                     try {
                         let nkey: any = storage.key(message.value);
 
-                        source.postMessage(<Fabrique.StorageMessage>{
+                        source.postMessage(<Fabrique.IStorageMessage>{
                             status: 'ok',
                             command: message.command,
                             value: nkey,

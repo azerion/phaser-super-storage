@@ -1,6 +1,6 @@
 module Fabrique {
     export module Plugins {
-        export interface SuperStorageGame extends Phaser.Game {
+        export interface ISuperStorageGame extends Phaser.Game {
             storage: Fabrique.Plugins.SuperStorage;
         }
 
@@ -45,10 +45,10 @@ module Fabrique {
                 if (this.storage === null) {
                     return 0;
                 }
-                
+
                 return this.storage.length;
             }
-            
+
             public setNamespace(namedSpace: string): void | Promise<void> {
                 if (this.storage !== null) {
                     return this.storage.setNamespace(namedSpace);
@@ -59,15 +59,16 @@ module Fabrique {
                 if (this.storage === null) {
                     return '';
                 }
-                
+
                 return this.storage.key(n);
             }
+
             public getItem(key: string): any | Promise<any> {
                 if (this.storage === null) {
                     return null;
                 }
 
-                return this.storage.getItem(key)
+                return this.storage.getItem(key);
             }
 
             public setItem(key: string, value: string): void | Promise<void> {
@@ -90,7 +91,6 @@ module Fabrique {
         }
     }
 }
-
 
 if ((<any>window).Phaser !== undefined) {
     Phaser.Utils.mixinPrototype(Fabrique.Plugins.SuperStorage, Phaser.Plugin);

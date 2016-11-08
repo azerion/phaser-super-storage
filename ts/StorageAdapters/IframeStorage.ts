@@ -7,7 +7,7 @@ module Fabrique {
             public namespace: string = '';
 
             public expectedOrigin: string = '';
-            
+
             private storageLength: number = 0;
 
             private enabled: boolean = false;
@@ -16,7 +16,9 @@ module Fabrique {
                 return true;
             }
 
-            set forcePromises(v: boolean) {}
+            set forcePromises(v: boolean) {
+                //Do nothing
+            }
 
             constructor(spacedName: string = '', expectedOrigin: string = '*') {
                 if (spacedName !== '') {
@@ -31,7 +33,7 @@ module Fabrique {
             }
 
             public init(): Promise<any> {
-                return this.sendMessage(<StorageMessage>{
+                return this.sendMessage(<IStorageMessage>{
                     command: StorageCommand.init
                 }).then(() => {
                     this.enabled = true;
@@ -39,21 +41,21 @@ module Fabrique {
             }
 
             public key(n: number): Promise<any> {
-                return this.sendMessage(<StorageMessage>{
+                return this.sendMessage(<IStorageMessage>{
                     command: StorageCommand.key,
                     value: n
                 });
             }
 
             public getItem(key: string): Promise<any> {
-                return this.sendMessage(<StorageMessage>{
+                return this.sendMessage(<IStorageMessage>{
                     command: StorageCommand.getItem,
                     key: key
                 });
             }
 
             public setItem(key: string, value: any): Promise<void> {
-                return this.sendMessage(<StorageMessage>{
+                return this.sendMessage(<IStorageMessage>{
                     command: StorageCommand.setItem,
                     key: key,
                     value: value
@@ -61,14 +63,14 @@ module Fabrique {
             }
 
             public removeItem(key: string): Promise<void> {
-                return this.sendMessage(<StorageMessage>{
+                return this.sendMessage(<IStorageMessage>{
                     command: StorageCommand.removeItem,
                     key: key
                 });
             }
 
             public clear(): Promise<void> {
-                return this.sendMessage(<StorageMessage>{
+                return this.sendMessage(<IStorageMessage>{
                     command: StorageCommand.clear
                 });
             }
@@ -80,14 +82,15 @@ module Fabrique {
                 });
             }
 
-            private sendMessage(message: StorageMessage): Promise<any> {
+            private sendMessage(message: IStorageMessage): Promise<any> {
+                let returnedResult: boolean;
                 if (message.command === StorageCommand.init) {
-                    var returnedResult: boolean = false;
+                    returnedResult = false;
                 }
 
-                var messageChannel:MessageChannel = new MessageChannel();
+                let messageChannel: MessageChannel = new MessageChannel();
 
-                return new Promise((resolve : (value?: any | Thenable<any>) => void, reject: (error?: any) => void) => {
+                return new Promise((resolve: (value?: any | Thenable<any>) => void, reject: (error?: any) => void) => {
                     if (!this.enabled && message.command !== StorageCommand.init) {
                         reject('Messaging not enabled!');
                     }
@@ -104,36 +107,36 @@ module Fabrique {
                     messageChannel.port1.onmessage = (event: MessageEvent) => {
                         console.log('Frame received message', event);
 
-                        let message: Fabrique.StorageMessage = StorageUtils.validateMessage(event.data);
+                        let receivedMessage: Fabrique.IStorageMessage = StorageUtils.validateMessage(event.data);
 
-                        if (message.command === StorageCommand.init) {
+                        if (receivedMessage.command === StorageCommand.init) {
                             returnedResult = true;
                         }
 
-                        if (message.status === undefined || message.status !== 'ok') {
-                            reject(message.value);
+                        if (receivedMessage.status === undefined || receivedMessage.status !== 'ok') {
+                            reject(receivedMessage.value);
                         }
 
-                        if (message.length !== undefined) {
-                            this.storageLength = message.length;
+                        if (receivedMessage.length !== undefined) {
+                            this.storageLength = receivedMessage.length;
                         }
 
-                        switch (message.command) {
+                        switch (receivedMessage.command) {
                             case StorageCommand.setNamespace:
-                                this.namespace = message.value + ':';
+                                this.namespace = receivedMessage.value + ':';
                             case StorageCommand.getItem:
                             case StorageCommand.length:
                             case StorageCommand.key:
-                                resolve(message.value);
+                                resolve(receivedMessage.value);
                                 break;
                             case StorageCommand.setItem:
                             case StorageCommand.removeItem:
                             case StorageCommand.clear:
                             case StorageCommand.init:
-                                resolve(message.status);
+                                resolve(receivedMessage.status);
                                 break;
                             default:
-                                reject(message.value);
+                                reject(receivedMessage.value);
                                 break;
                         }
                     };

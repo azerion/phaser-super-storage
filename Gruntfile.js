@@ -24,31 +24,21 @@ module.exports = function (grunt) {
             }
         },
         //Typescript settings per build
-        typescript: {
-            options: {
-                module: 'amd',
-                target: 'es5',
-                sourceMap: true,
-                declaration: true,
-                references: [
-                    'vendor/*.d.ts',
-                    'node_modules/phaser/typescript/pixi.d.ts',
-                    'node_modules/phaser/typescript/phaser.d.ts'
-                ],
-                noImplicitAny: true
-            },
+        ts: {
             dist: {
+                tsconfig: './config/tsconfig.json',
                 src: ['ts/**/*.ts', '!ts/Utils/Helper.ts'],
                 dest: 'build/<%= pkg.name %>.js'
             },
             helper: {
+                tsconfig: './config/tsconfig.json',
                 src: ['ts/Utils/*.ts', 'ts/StorageAdapters/LocalStorage.ts', 'ts/StorageAdapters/IStorage.ts'],
                 dest: 'build/phaser-storage-helper.js'
             }
         },
         watch: {
             files: ['ts/**/*.ts'],
-            tasks: ['typescript'],
+            tasks: ['ts'],
             options: {
                 livereload: true
             }
@@ -70,7 +60,7 @@ module.exports = function (grunt) {
                     unused: true,
                     if_return: true,
                     join_vars: true,
-                    drop_console: true
+                    drop_console: false
                 },
                 mangle: true,
                 beautify: false
@@ -78,7 +68,6 @@ module.exports = function (grunt) {
             dist: {
                 files: {
                     'build/<%= pkg.name %>.min.js': [
-                        'vendor/*.js',
                         'build/<%= pkg.name %>.js'
                     ],
                     'build/phaser-storage-helper.min.js': [
@@ -87,37 +76,42 @@ module.exports = function (grunt) {
                 }
             }
         },
-        concat: {
-            dist: {
-                src: ['vendor/es6-promise.d.ts', 'build/<%= pkg.name %>.d.ts'],
-                dest: 'build/<%= pkg.name %>.d.ts'
-            }
-        },
         clean: {
             dist: ['build']
+        },
+        tslint: {
+            options: {
+                // can be a configuration object or a filepath to tslint.json
+                configuration: "./config/tslint.json"
+            },
+            dist: {
+                src: [
+                    'ts/**/*.ts'
+                ]
+            }
         }
     });
 
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-banner');
-    grunt.loadNpmTasks('grunt-typescript');
-    grunt.loadNpmTasks('grunt-contrib-concat');
+    grunt.loadNpmTasks('grunt-ts');
+    grunt.loadNpmTasks('grunt-tslint');
     grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-contrib-watch');
 
     //dist Build
     grunt.registerTask('dist', [
+        'tslint',
         'clean:dist',     //Clean the dist folder
-        'typescript:dist',//Run typescript on the preprocessed files, for dist (client)
-        'typescript:helper',
+        'ts:dist',//Run typescript on the preprocessed files, for dist (client)
+        'ts:helper',
         'uglify:dist',    //Minify everything
-        'concat:dist',    //Minify everything
         'usebanner:dist'    //Minify everything
     ]);
 
     grunt.registerTask('dev', [
-        'typescript:dist',
+        'ts:dist',
         'connect',
         'watch'
     ]);

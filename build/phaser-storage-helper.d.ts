@@ -1,5 +1,9 @@
+/// <reference types="es6-promise" />
+import StorageCommand = Fabrique.StorageCommand;
+import StorageUtils = Fabrique.StorageUtils;
+import LocalStorage = Fabrique.StorageAdapters.LocalStorage;
 declare module Fabrique {
-    interface StorageMessage {
+    interface IStorageMessage {
         command: StorageCommand;
         status?: string;
         key?: string;
@@ -18,7 +22,7 @@ declare module Fabrique {
     }
     class StorageUtils {
         static isLocalStorageSupport(): boolean;
-        static validateMessage(data: StorageMessage): StorageMessage;
+        static validateMessage(data: IStorageMessage): IStorageMessage;
         static nameSpaceKeyFilter(keys: string[], namespace: string): string[];
     }
 }
@@ -31,7 +35,7 @@ declare module Fabrique {
             namespace: string;
             forcePromises: boolean;
             constructor(spacedName?: string);
-            length: number;
+            readonly length: number;
             key(n: number): any | Promise<any>;
             getItem(key: string): any | Promise<any>;
             setItem(key: string, value: any): void | Promise<void>;
@@ -42,9 +46,6 @@ declare module Fabrique {
         }
     }
 }
-import StorageCommand = Fabrique.StorageCommand;
-import StorageUtils = Fabrique.StorageUtils;
-import LocalStorage = Fabrique.StorageAdapters.LocalStorage;
 declare module Fabrique {
     module StorageAdapters {
         interface IStorage {

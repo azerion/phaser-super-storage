@@ -7,6 +7,9 @@ Key features:
  - Cookie Fallback
  - Support for iframes with helper script
  - Support for custom storage adapters
+ 
+Requirements
+ - If you use TypeScript, also include the types for es6-promise in your project
 
 Getting Started
 ===============

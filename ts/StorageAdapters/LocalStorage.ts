@@ -20,7 +20,7 @@ module Fabrique {
 
             public key(n: number): any | Promise<any> {
                 let keys: string[] = Object.keys(localStorage);
-                let spacedKeys: string[] =  StorageUtils.nameSpaceKeyFilter(keys, this.namespace);
+                let spacedKeys: string[] = StorageUtils.nameSpaceKeyFilter(keys, this.namespace);
 
                 let item: any = localStorage.getItem(spacedKeys[n]);
 
@@ -72,7 +72,7 @@ module Fabrique {
 
             public setNamespace(spacedName: string): void | Promise<void> {
                 if (spacedName) {
-                    this.namespace = spacedName + ':'
+                    this.namespace = spacedName + ':';
                 }
 
                 if (this.forcePromises) {
@@ -81,7 +81,7 @@ module Fabrique {
             }
 
             private promisefy(value: any): Promise<any> {
-                return new Promise((resolve : (value?: any | Thenable<any>) => void, reject: (error?: any) => void) => {
+                return new Promise((resolve: (value?: any | Thenable<any>) => void, reject: (error?: any) => void) => {
                     resolve(value);
                 });
             }

@@ -1,14 +1,13 @@
 module Fabrique {
     export module StorageAdapters {
-        export interface IStorage
-        {
+        export interface IStorage {
             forcePromises: boolean;
 
             //The amount of items in the storage
             length: number;
 
             //The namespace for the current storge
-            namespace:string;
+            namespace: string;
 
             //Get an item from the storage
             getItem(key: string): any | Promise<any>;
@@ -17,7 +16,7 @@ module Fabrique {
             removeItem(key: string): any | Promise<any>;
 
             //Set an item in the storage
-            setItem(key: string, value:any): void | Promise<void>;
+            setItem(key: string, value: any): void | Promise<void>;
 
             key(n: number): any | Promise<any>;
 
