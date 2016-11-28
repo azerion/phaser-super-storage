@@ -1,12 +1,3 @@
-/*!
- * phaser-super-storage - version 0.1.0 
- * A cross platform storage plugin for Phaser
- *
- * OrangeGames
- * Build at 08-11-2016
- * Released under MIT License 
- */
-
 var Fabrique;
 (function (Fabrique) {
     var StorageAdapters;
@@ -99,6 +90,134 @@ var Fabrique;
             return CookieStorage;
         }());
         StorageAdapters.CookieStorage = CookieStorage;
+    })(StorageAdapters = Fabrique.StorageAdapters || (Fabrique.StorageAdapters = {}));
+})(Fabrique || (Fabrique = {}));
+var Fabrique;
+(function (Fabrique) {
+    var StorageAdapters;
+    (function (StorageAdapters) {
+        /**
+         * Storage driver for browser's localStorage
+         */
+        var CordovaStorage = (function () {
+            // Due to async /w promise it is not possible to pass namespace in constructor
+            function CordovaStorage() {
+                this.namespace = '';
+                this.keys = [];
+            }
+            Object.defineProperty(CordovaStorage.prototype, "forcePromises", {
+                get: function () {
+                    return true;
+                },
+                set: function (v) {
+                    //Do nothing
+                },
+                enumerable: true,
+                configurable: true
+            });
+            Object.defineProperty(CordovaStorage.prototype, "length", {
+                get: function () {
+                    return this.keys.length;
+                },
+                enumerable: true,
+                configurable: true
+            });
+            CordovaStorage.prototype.key = function (n) {
+                return this.promisefy(this.keys[n]);
+            };
+            CordovaStorage.prototype.getItem = function (key) {
+                var _this = this;
+                return new Promise(function (resolve, reject) {
+                    NativeStorage.getItem(_this.namespace + ':' + key, function (value) {
+                        resolve(value);
+                    }, function (error) {
+                        reject(error);
+                    });
+                });
+            };
+            CordovaStorage.prototype.setItem = function (key, value) {
+                var _this = this;
+                return new Promise(function (resolve, reject) {
+                    NativeStorage.setItem(_this.namespace + ':' + key, value, function (value) {
+                        if (_this.keys.indexOf(key) < 0) {
+                            _this.keys.push(key);
+                            _this.save();
+                        }
+                        resolve(null);
+                    }, function (error) {
+                        reject(error);
+                    });
+                });
+            };
+            CordovaStorage.prototype.removeItem = function (key) {
+                var _this = this;
+                return new Promise(function (resolve, reject) {
+                    NativeStorage.remove(_this.namespace + ':' + key, function () {
+                        var id = _this.keys.indexOf(key);
+                        if (id >= 0) {
+                            _this.keys.splice(id, 1);
+                            _this.save();
+                        }
+                        resolve();
+                    }, function (error) {
+                        reject(error);
+                    });
+                });
+            };
+            CordovaStorage.prototype.clear = function () {
+                var _this = this;
+                return new Promise(function (resolve, reject) {
+                    var counter = 0;
+                    for (var i = 0; i < _this.keys.length; i++) {
+                        NativeStorage.remove(_this.namespace + ':' + _this.keys[i], function () {
+                            if (++counter >= _this.keys.length) {
+                                resolve();
+                                _this.keys = [];
+                                _this.save();
+                            }
+                        }, function (error) {
+                            reject(error);
+                        });
+                    }
+                });
+            };
+            CordovaStorage.prototype.setNamespace = function (spacedName) {
+                var _this = this;
+                if (!spacedName) {
+                    spacedName = ' ';
+                }
+                this.namespace = spacedName;
+                this.keys = [];
+                return new Promise(function (resolve, reject) {
+                    _this.load().then(resolve).catch(resolve);
+                });
+            };
+            CordovaStorage.prototype.promisefy = function (value) {
+                return new Promise(function (resolve, reject) {
+                    resolve(value);
+                });
+            };
+            CordovaStorage.prototype.load = function () {
+                var _this = this;
+                return new Promise(function (resolve, reject) {
+                    NativeStorage.getItem(_this.namespace, function (value) {
+                        _this.keys = JSON.parse(value);
+                        resolve(null);
+                    }, function (error) {
+                        reject(error);
+                    });
+                });
+            };
+            CordovaStorage.prototype.save = function () {
+                NativeStorage.setItem(this.namespace, JSON.stringify(this.keys), function () {
+                    return;
+                }, function (error) {
+                    console.warn('CordovaStorage: Failed to save keys of namespace.');
+                });
+            };
+            return CordovaStorage;
+        }());
+        StorageAdapters.CordovaStorage = CordovaStorage;
     })(StorageAdapters = Fabrique.StorageAdapters || (Fabrique.StorageAdapters = {}));
 })(Fabrique || (Fabrique = {}));
 var Fabrique;

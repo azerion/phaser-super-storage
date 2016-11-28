@@ -24,6 +24,29 @@ declare module Fabrique {
 }
 declare module Fabrique {
     module StorageAdapters {
+        /**
+         * Storage driver for browser's localStorage
+         */
+        class CordovaStorage implements IStorage {
+            namespace: string;
+            private keys;
+            forcePromises: boolean;
+            constructor();
+            readonly length: number;
+            key(n: number): Promise<any>;
+            getItem(key: string): Promise<any>;
+            setItem(key: string, value: any): Promise<void>;
+            removeItem(key: string): Promise<void>;
+            clear(): Promise<void>;
+            setNamespace(spacedName: string): Promise<void>;
+            private promisefy(value);
+            private load();
+            private save();
+        }
+    }
+}
+declare module Fabrique {
+    module StorageAdapters {
         interface IStorage {
             forcePromises: boolean;
             length: number;

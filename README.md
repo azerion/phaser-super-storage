@@ -129,6 +129,14 @@ Local & Cookie Storage
 ----------------------
 The default usage of phaser-super-storage require the LocalStorage and CookieStorage adapter. It will always try to use the LocalStorage Adapater, but when all fails it falls back to Cookie sotrage, no configuration needed!
 
+Cordova
+-------
+You can now also use the CordovaStorage adapter, which uses the NativeStorage plugin of cordova. This prevents the auto-deletion of data on IOS when not having enough memory. If you are using the adapter, please note that passing the namespace in the constructor is not allowed and that it is only testable in a cordova application. It can be enabled by the following command:
+```javascript
+game.storage.setAdapter(new Fabrique.StorageAdapters.CordovaStorage());
+```
+
+
 Iframe
 ------
 We publish our games on HTML5 game portals trough the usage of iFrames, a downside of this is that for iOS both localStorage and Cookies aren't persisted for iframes. In order to counter this we included an IframeStorage adapter that should be set in the game, than the helper script included in the build folder should be loaded in the parent frame.
@@ -158,7 +166,7 @@ iframeAdapter.init().then(function() {
 
 Caveats
 =======
-Altho we try our best to store data, in some cases you can consider data lost when a user closes his browser or ends his session. I'm talking offcourse about private browsing. Both LocalStorage and Cookies will be cleared, so if you want to keep userdata alive their I suggest you try to get people to login and use a custom StorageAdapter to save the data server sided.
+Altho we try our best to store data, in some cases you can consider data lost when a user closes his browser or ends his session. I'm talking offcourse about private browsing. Both LocalStorage and Cookies will be cleared, so if you want to keep userdata alive their I suggest you try to get people to login and use a custom StorageAdapter to save the data server sided. Please note that we use the colon as namespace appendix, so we advice you not to use it yourself.   
 
 Disclaimer
 ==========
