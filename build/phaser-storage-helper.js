@@ -1,3 +1,12 @@
+/*!
+ * phaser-super-storage - version 0.2.0 
+ * A cross platform storage plugin for Phaser
+ *
+ * OrangeGames
+ * Build at 28-11-2016
+ * Released under MIT License 
+ */
+
 var StorageCommand = Fabrique.StorageCommand;
 var StorageUtils = Fabrique.StorageUtils;
 var LocalStorage = Fabrique.StorageAdapters.LocalStorage;

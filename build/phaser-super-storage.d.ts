@@ -38,7 +38,7 @@ declare module Fabrique {
             setItem(key: string, value: any): Promise<void>;
             removeItem(key: string): Promise<void>;
             clear(): Promise<void>;
-            setNamespace(spacedName: string): Promise<void>;
+            setNamespace(spacedName?: string): Promise<void>;
             private promisefy(value);
             private load();
             private save();

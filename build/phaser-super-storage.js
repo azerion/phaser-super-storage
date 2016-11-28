@@ -1,3 +1,12 @@
+/*!
+ * phaser-super-storage - version 0.2.0 
+ * A cross platform storage plugin for Phaser
+ *
+ * OrangeGames
+ * Build at 28-11-2016
+ * Released under MIT License 
+ */
+
 var Fabrique;
 (function (Fabrique) {
     var StorageAdapters;
@@ -128,7 +137,7 @@ var Fabrique;
             CordovaStorage.prototype.getItem = function (key) {
                 var _this = this;
                 return new Promise(function (resolve, reject) {
-                    NativeStorage.getItem(_this.namespace + ':' + key, function (value) {
+                    NativeStorage.getItem(_this.namespace + key, function (value) {
                         resolve(value);
                     }, function (error) {
                         reject(error);
@@ -137,8 +146,12 @@ var Fabrique;
             };
             CordovaStorage.prototype.setItem = function (key, value) {
                 var _this = this;
+                if (key.length < 1) {
+                    console.error('CordovaStorage: Key cannot be an empty string!');
+                    return;
+                }
                 return new Promise(function (resolve, reject) {
-                    NativeStorage.setItem(_this.namespace + ':' + key, value, function (value) {
+                    NativeStorage.setItem(_this.namespace + key, value, function () {
                         if (_this.keys.indexOf(key) < 0) {
                             _this.keys.push(key);
                             _this.save();
@@ -183,10 +196,8 @@ var Fabrique;
             };
             CordovaStorage.prototype.setNamespace = function (spacedName) {
                 var _this = this;
-                if (!spacedName) {
-                    spacedName = ' ';
-                }
-                this.namespace = spacedName;
+                if (spacedName === void 0) { spacedName = ''; }
+                this.namespace = spacedName + ':';
                 this.keys = [];
                 return new Promise(function (resolve, reject) {
                     _this.load().then(resolve).catch(resolve);

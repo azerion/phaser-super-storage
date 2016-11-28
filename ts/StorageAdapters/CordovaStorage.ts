@@ -44,7 +44,7 @@ module Fabrique {
                     return;
                 }
                 return new Promise((resolve: (value?: any | Thenable<any>) => void, reject: (error?: any) => void) => {
-                    NativeStorage.setItem(this.namespace + key, value, (value: string) => {
+                    NativeStorage.setItem(this.namespace + key, value, () => {
                         if (this.keys.indexOf(key) < 0) {
                             this.keys.push(key);
                             this.save();
