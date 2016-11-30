@@ -28,12 +28,16 @@ module Fabrique {
                 return this.promisefy(this.keys[n]);
             }
 
-            public getItem(key: string): Promise<any> {
-                return new Promise((resolve: (value?: any | Thenable<any>) => void, reject: (error?: any) => void) => {
+            public getItem(key: string): Promise<string> {
+                return new Promise((resolve: (value?: string) => void, reject: (error?: INativeStorageError) => void) => {
                     NativeStorage.getItem(this.namespace + key, (value: string) => {
                         resolve(value);
-                    }, (error: any) => {
-                        reject(error);
+                    }, (error: INativeStorageError) => {
+                        if (error.code === 2) {
+                            resolve(null);
+                        } else {
+                            reject(error);
+                        }
                     });
                 });
             }
@@ -43,45 +47,45 @@ module Fabrique {
                     console.error('CordovaStorage: Key cannot be an empty string!');
                     return;
                 }
-                return new Promise((resolve: (value?: any | Thenable<any>) => void, reject: (error?: any) => void) => {
+                return new Promise((resolve: (value?: void) => void, reject: (error?: INativeStorageError) => void) => {
                     NativeStorage.setItem(this.namespace + key, value, () => {
                         if (this.keys.indexOf(key) < 0) {
                             this.keys.push(key);
                             this.save();
                         }
                         resolve(null);
-                    }, (error: any) => {
+                    }, (error: INativeStorageError) => {
                         reject(error);
                     });
                 });
             }
 
             public removeItem(key: string): Promise<void> {
-                return new Promise((resolve: (value?: any | Thenable<any>) => void, reject: (error?: any) => void) => {
+                return new Promise((resolve: (value?: void) => void, reject: (error?: INativeStorageError) => void) => {
                     NativeStorage.remove(this.namespace + ':' + key, () => {
                         let id: number = this.keys.indexOf(key);
                         if (id >= 0) {
                             this.keys.splice(id, 1);
                             this.save();
                         }
-                        resolve();
-                    }, (error: any) => {
+                        resolve(null);
+                    }, (error: INativeStorageError) => {
                         reject(error);
                     });
                 });
             }
 
             public clear(): Promise<void> {
-                return new Promise((resolve: (value?: any | Thenable<any>) => void, reject: (error?: any) => void) => {
+                return new Promise((resolve: (value?: void) => void, reject: (error?: INativeStorageError) => void) => {
                     let counter: number = 0;
                     for (let i: number = 0; i < this.keys.length; i++) {
                         NativeStorage.remove(this.namespace + ':' + this.keys[i], () => {
                             if (++counter >= this.keys.length) {
-                                resolve();
                                 this.keys = [];
                                 this.save();
+                                resolve(null);
                             }
-                        }, (error: any) => {
+                        }, (error: INativeStorageError) => {
                             reject(error);
                         });
                     }
@@ -91,23 +95,23 @@ module Fabrique {
             public setNamespace(spacedName: string = ''): Promise<void> {
                 this.namespace = spacedName + ':';
                 this.keys = [];
-                return new Promise((resolve: (value?: any | Thenable<any>) => void, reject: (error?: any) => void) => {
+                return new Promise((resolve: (value?: void) => void, reject: (error?: INativeStorageError) => void) => {
                     this.load().then(resolve).catch(resolve);
                 });
             }
 
             private promisefy(value: any): Promise<any> {
-                return new Promise((resolve: (value?: any | Thenable<any>) => void, reject: (error?: any) => void) => {
+                return new Promise((resolve: (value?: string) => void, reject: (error?: INativeStorageError) => void) => {
                     resolve(value);
                 });
             }
 
             private load(): Promise<void> {
-                return new Promise((resolve: (value?: any | Thenable<any>) => void, reject: (error?: any) => void) => {
+                return new Promise((resolve: (value?: void) => void, reject: (error?: INativeStorageError) => void) => {
                     NativeStorage.getItem(this.namespace, (value: string) => {
                         this.keys = JSON.parse(value);
                         resolve(null);
-                    }, (error: any) => {
+                    }, (error: INativeStorageError) => {
                         reject(error);
                     });
                 });

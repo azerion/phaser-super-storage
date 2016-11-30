@@ -1,9 +1,9 @@
 /*!
- * phaser-super-storage - version 0.2.0 
+ * phaser-super-storage - version 0.2.1 
  * A cross platform storage plugin for Phaser
  *
  * OrangeGames
- * Build at 28-11-2016
+ * Build at 30-11-2016
  * Released under MIT License 
  */
 
@@ -140,7 +140,12 @@ var Fabrique;
                     NativeStorage.getItem(_this.namespace + key, function (value) {
                         resolve(value);
                     }, function (error) {
-                        reject(error);
+                        if (error.code === 2) {
+                            resolve(null);
+                        }
+                        else {
+                            reject(error);
+                        }
                     });
                 });
             };
@@ -171,7 +176,7 @@ var Fabrique;
                             _this.keys.splice(id, 1);
                             _this.save();
                         }
-                        resolve();
+                        resolve(null);
                     }, function (error) {
                         reject(error);
                     });
@@ -184,9 +189,9 @@ var Fabrique;
                     for (var i = 0; i < _this.keys.length; i++) {
                         NativeStorage.remove(_this.namespace + ':' + _this.keys[i], function () {
                             if (++counter >= _this.keys.length) {
-                                resolve();
                                 _this.keys = [];
                                 _this.save();
+                                resolve(null);
                             }
                         }, function (error) {
                             reject(error);

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no"/>
 
     <title>Phaser Super Storage example</title>
 
@@ -29,94 +29,101 @@
 </body>
 <!-- Game we want to track -->
 <script type="text/javascript">
-
-    var console = {
-        log: function(msg) {
-            document.getElementById('indicator').innerHTML += msg + '<br/>';
-        },
-        error: function(error) {
-            document.getElementById('indicator').innerHTML += 'err: ' + error + '<br/>';
-        },
-        warn: function(warn) {
-            document.getElementById('indicator').innerHTML += 'warn: ' + warn + '<br/>';
-        }
-    };
-
-    var game = new Phaser.Game(80, 60, Phaser.AUTO, 'game-container', { init: init, create: create, preload: preload});
-    Phaser.Device.whenReady(function () {
-        game.plugins.add(Fabrique.Plugins.SuperStorage);
-    });
-
-    function init() {
-        game.storage.setAdapter(new Fabrique.StorageAdapters.CordovaStorage());
-
-        // Set namespace and wait for it to load the keys
-        game.storage.setNamespace('as').then(() => {
-
-            // Show all key/values
-            console.log('Total: ' + game.storage.length);
-            for (var i = 0; i < game.storage.length; i++) {
-                game.storage.key(i).then((key) => {
-                    game.storage.getItem(key).then((value) => {
-                        console.log(i + ': ' + key + ': ' + value);
-                    });
-                });
+    document.addEventListener("deviceready", function () {
+        var console = {
+            log: function (msg) {
+                document.getElementById('indicator').innerHTML += msg + '<br/>';
+            },
+            error: function (error) {
+                document.getElementById('indicator').innerHTML += 'err: ' + error + '<br/>';
+            },
+            warn: function (warn) {
+                document.getElementById('indicator').innerHTML += 'warn: ' + warn + '<br/>';
             }
+        };
 
-            // Show specific key
-            game.storage.getItem('foo').then((value) => {
-                console.log('Foo: ' + value);
-            }).catch((e) => {
-                console.log('Failed to load Foo.');
-            });
-
-            // Remove specific item
-            game.storage.removeItem('foo').then(() => {
-                console.log('Removed Foo!');
-            }).catch((e) => {
-                console.log('Failed to remove Foo.');
-            });
-
-            // Clear all in namespace
-            game.storage.clear().then(() => {
-                console.log('Cleared all in namespace.');
-            }).catch(() => {
-                console.log('Failed to clear.');
-            });
-
-            // Set values
-            game.storage.setItem('foo', 'bar').then(() => {
-                console.log('Value has been set!');
-            });
+        var game = new Phaser.Game(80, 60, Phaser.AUTO, 'game-container', {init: init, create: create, preload: preload});
+        Phaser.Device.whenReady(function () {
+            game.plugins.add(Fabrique.Plugins.SuperStorage);
         });
 
-/*
-        game.storage.setItem('foo', 'bar', function () {
-            game.storage.setItem('foo', function (value) {
-                console.log(value)
-            })
-        })
+        function init() {
+            game.storage.setAdapter(new Fabrique.StorageAdapters.CordovaStorage());
 
-        game.storage.setItem('something4', 'data4')
-            .then(game.storage.getItem('foo'))
-            .then(function (value) => {console.log(value)});
+            // Set namespace and wait for it to load the keys
+            game.storage.setNamespace('as').then(function () {
+                // Show all key/values
+                console.log('Total: ' + game.storage.length);
+                for (var i = 0; i < game.storage.length; i++) {
+                    game.storage.key(i).then(function (key) {
+                        game.storage.getItem(key).then(function (value) {
+                            console.log(i + ': ' + key + ': ' + value);
+                        });
+                    });
+                }
 
-*/
+                // Show specific key
+                game.storage.getItem('foo').then(function (value) {
+                    console.log('Foo: ' + value);
+                }).catch(function (e) {
+                    console.log('Failed to load Foo.');
+                });
 
-        /*var promise = game.storage.getItem('something');
-        promise.then((value) => {
-            console.log('loaded: ' + value);
-        }).catch((err) => {
-            console.error('Failed to load: ' + err);
-        });*/
+                // Remove specific item
+                game.storage.removeItem('foo').then(function () {
+                    console.log('Removed Foo!');
+                }).catch(function (e) {
+                    console.log('Failed to remove Foo.');
+                });
 
-        //game.storage.removeItem('something');
-    }
+                // Clear all in namespace
+                game.storage.clear().then(function () {
+                    console.log('Cleared all in namespace.');
+                }).catch(function () {
+                    console.log('Failed to clear.');
+                });
 
-    function preload() {
-    }
+                // Set values
+                game.storage.setItem('foo', 'bar').then(function () {
+                    console.log('Value has been set!');
+                });
 
-    function create(){
-    }
+                //get non existing value\
+                game.storage.getItem('something').then(function (value) {
+                    console.log('Foo: ' + value);
+                }).catch(function (e) {
+                    console.log('Failed to load Foo.');
+                });
+
+            });
+            /*
+             game.storage.setItem('foo', 'bar', function () {
+             game.storage.setItem('foo', function (value) {
+             console.log(value)
+             })
+             })
+
+             game.storage.setItem('something4', 'data4')
+             .then(game.storage.getItem('foo'))
+             .then(function (value) => {console.log(value)});
+
+             */
+            /*var promise = game.storage.getItem('something');
+             promise.then((value) => {
+             console.log('loaded: ' + value);
+             }).catch((err) => {
+             console.error('Failed to load: ' + err);
+             });*/
+            //game.storage.removeItem('something');
+        }
+
+        function preload() {
+        }
+
+        function
+
+        create() {
+        }
+    });
 </script>
 </html>

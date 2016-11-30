@@ -34,7 +34,7 @@ declare module Fabrique {
             constructor();
             readonly length: number;
             key(n: number): Promise<any>;
-            getItem(key: string): Promise<any>;
+            getItem(key: string): Promise<string>;
             setItem(key: string, value: any): Promise<void>;
             removeItem(key: string): Promise<void>;
             clear(): Promise<void>;
