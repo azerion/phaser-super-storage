@@ -1,5 +1,5 @@
 {
-  "name": "phaser-super-storage",
+  "name": "@orange-games/phaser-super-storage",
   "author": "OrangeGames",
   "version": "0.2.1",
   "description": "A cross platform storage plugin for Phaser",
