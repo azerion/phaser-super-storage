@@ -1,15 +1,15 @@
 /*!
- * phaser-super-storage - version 0.2.1 
+ * phaser-super-storage - version 1.0.0 
  * A cross platform storage plugin for Phaser
  *
  * OrangeGames
- * Build at 30-11-2016
+ * Build at 20-12-2016
  * Released under MIT License 
  */
 
-var StorageCommand = Fabrique.StorageCommand;
-var StorageUtils = Fabrique.StorageUtils;
-var LocalStorage = Fabrique.StorageAdapters.LocalStorage;
+var StorageCommand = PhaserSuperStorage.StorageCommand;
+var StorageUtils = PhaserSuperStorage.StorageUtils;
+var LocalStorage = PhaserSuperStorage.StorageAdapters.LocalStorage;
 (function () {
     var gameOrigin = window.gameOrigin || '*';
     var localStorageSupported = StorageUtils.isLocalStorageSupport();
@@ -139,12 +139,12 @@ var LocalStorage = Fabrique.StorageAdapters.LocalStorage;
             }
         }
         else {
-            sendError(message.command, 'Empty message!');
+            sendError(StorageCommand.error, 'Empty message!');
         }
     });
 })();
-var Fabrique;
-(function (Fabrique) {
+var PhaserSuperStorage;
+(function (PhaserSuperStorage) {
     (function (StorageCommand) {
         StorageCommand[StorageCommand["init"] = 0] = "init";
         StorageCommand[StorageCommand["setItem"] = 1] = "setItem";
@@ -154,8 +154,9 @@ var Fabrique;
         StorageCommand[StorageCommand["setNamespace"] = 5] = "setNamespace";
         StorageCommand[StorageCommand["length"] = 6] = "length";
         StorageCommand[StorageCommand["key"] = 7] = "key";
-    })(Fabrique.StorageCommand || (Fabrique.StorageCommand = {}));
-    var StorageCommand = Fabrique.StorageCommand;
+        StorageCommand[StorageCommand["error"] = 8] = "error";
+    })(PhaserSuperStorage.StorageCommand || (PhaserSuperStorage.StorageCommand = {}));
+    var StorageCommand = PhaserSuperStorage.StorageCommand;
     var StorageUtils = (function () {
         function StorageUtils() {
         }
@@ -185,10 +186,10 @@ var Fabrique;
         };
         return StorageUtils;
     }());
-    Fabrique.StorageUtils = StorageUtils;
-})(Fabrique || (Fabrique = {}));
-var Fabrique;
-(function (Fabrique) {
+    PhaserSuperStorage.StorageUtils = StorageUtils;
+})(PhaserSuperStorage || (PhaserSuperStorage = {}));
+var PhaserSuperStorage;
+(function (PhaserSuperStorage) {
     var StorageAdapters;
     (function (StorageAdapters) {
         /**
@@ -204,14 +205,14 @@ var Fabrique;
             Object.defineProperty(LocalStorage.prototype, "length", {
                 get: function () {
                     var keys = Object.keys(localStorage);
-                    return Fabrique.StorageUtils.nameSpaceKeyFilter(keys, this.namespace).length;
+                    return PhaserSuperStorage.StorageUtils.nameSpaceKeyFilter(keys, this.namespace).length;
                 },
                 enumerable: true,
                 configurable: true
             });
             LocalStorage.prototype.key = function (n) {
                 var keys = Object.keys(localStorage);
-                var spacedKeys = Fabrique.StorageUtils.nameSpaceKeyFilter(keys, this.namespace);
+                var spacedKeys = PhaserSuperStorage.StorageUtils.nameSpaceKeyFilter(keys, this.namespace);
                 var item = localStorage.getItem(spacedKeys[n]);
                 if (this.forcePromises) {
                     return this.promisefy(item);
@@ -239,7 +240,7 @@ var Fabrique;
             };
             LocalStorage.prototype.clear = function () {
                 var keys = Object.keys(localStorage);
-                var spacedKeys = Fabrique.StorageUtils.nameSpaceKeyFilter(keys, this.namespace);
+                var spacedKeys = PhaserSuperStorage.StorageUtils.nameSpaceKeyFilter(keys, this.namespace);
                 for (var i = 0; i < spacedKeys.length; i++) {
                     localStorage.removeItem(spacedKeys[i]);
                 }
@@ -263,6 +264,6 @@ var Fabrique;
             return LocalStorage;
         }());
         StorageAdapters.LocalStorage = LocalStorage;
-    })(StorageAdapters = Fabrique.StorageAdapters || (Fabrique.StorageAdapters = {}));
-})(Fabrique || (Fabrique = {}));
+    })(StorageAdapters = PhaserSuperStorage.StorageAdapters || (PhaserSuperStorage.StorageAdapters = {}));
+})(PhaserSuperStorage || (PhaserSuperStorage = {}));
 //# sourceMappingURL=phaser-storage-helper.js.map

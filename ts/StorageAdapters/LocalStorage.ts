@@ -1,4 +1,4 @@
-module Fabrique {
+module PhaserSuperStorage {
     export module StorageAdapters {
         /**
          * Storage driver for browser's localStorage

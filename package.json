@@ -1,7 +1,7 @@
 {
   "name": "@orange-games/phaser-super-storage",
   "author": "OrangeGames",
-  "version": "0.2.1",
+  "version": "1.0.0",
   "description": "A cross platform storage plugin for Phaser",
   "contributors": [
     {
@@ -19,22 +19,27 @@
       "url": "https://github.com/orange-games/phaser-super-storage/raw/master/LICENSE"
     }
   ],
+  "bugs": [
+    {
+      "url": "https://github.com/orange-games/phaser-super-storage/issues"
+    }
+  ],
+  "config": {
+    "name": "phaser-super-storage"
+  },
   "devDependencies": {
     "@types/es6-promise": "0.0.32",
-    "grunt": "0.4.x",
+    "grunt": "1.0.x",
     "grunt-banner": "^0.6.0",
-    "grunt-contrib-clean": "0.6.0",
-    "grunt-contrib-concat": "^1.0.1",
-    "grunt-contrib-connect": "^0.11.2",
-    "grunt-contrib-uglify": "^0.11.0",
-    "grunt-contrib-watch": "^0.6.1",
+    "grunt-contrib-clean": "1.0.x",
+    "grunt-contrib-concat": "1.0.x",
+    "grunt-contrib-connect": "1.0.x",
+    "grunt-contrib-uglify": "2.0.x",
+    "grunt-contrib-watch": "1.0.x",
     "grunt-ts": "^6.0.0-beta.3",
     "grunt-tslint": "^3.3.0",
     "phaser": "2.6.2",
     "tslint": "^3.15.1",
-    "typescript": "2.0.x"
-  },
-  "engines": {
-    "node": "6.x.x"
+    "typescript": "2.1.x"
   }
 }
