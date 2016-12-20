@@ -1,4 +1,4 @@
-module Fabrique {
+module PhaserSuperStorage {
     export module StorageAdapters {
         export interface IStorage {
             forcePromises: boolean;

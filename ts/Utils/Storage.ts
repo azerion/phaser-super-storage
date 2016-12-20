@@ -1,4 +1,4 @@
-module Fabrique {
+module PhaserSuperStorage {
     export interface IStorageMessage {
         command: StorageCommand;
         status?: string;
@@ -15,7 +15,8 @@ module Fabrique {
         clear,
         setNamespace,
         length,
-        key
+        key,
+        error
     }
 
     export class StorageUtils {

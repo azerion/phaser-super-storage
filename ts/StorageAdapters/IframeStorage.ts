@@ -1,4 +1,4 @@
-module Fabrique {
+module PhaserSuperStorage {
     export module StorageAdapters {
         /**
          * Storage driver for browser's localStorage
@@ -107,7 +107,7 @@ module Fabrique {
                     messageChannel.port1.onmessage = (event: MessageEvent) => {
                         console.log('Frame received message', event);
 
-                        let receivedMessage: Fabrique.IStorageMessage = StorageUtils.validateMessage(event.data);
+                        let receivedMessage: PhaserSuperStorage.IStorageMessage = StorageUtils.validateMessage(event.data);
 
                         if (receivedMessage.command === StorageCommand.init) {
                             returnedResult = true;

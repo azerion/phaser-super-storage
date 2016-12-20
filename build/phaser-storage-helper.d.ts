@@ -1,8 +1,8 @@
 /// <reference types="es6-promise" />
-import StorageCommand = Fabrique.StorageCommand;
-import StorageUtils = Fabrique.StorageUtils;
-import LocalStorage = Fabrique.StorageAdapters.LocalStorage;
-declare module Fabrique {
+import StorageCommand = PhaserSuperStorage.StorageCommand;
+import StorageUtils = PhaserSuperStorage.StorageUtils;
+import LocalStorage = PhaserSuperStorage.StorageAdapters.LocalStorage;
+declare module PhaserSuperStorage {
     interface IStorageMessage {
         command: StorageCommand;
         status?: string;
@@ -19,6 +19,7 @@ declare module Fabrique {
         setNamespace = 5,
         length = 6,
         key = 7,
+        error = 8,
     }
     class StorageUtils {
         static isLocalStorageSupport(): boolean;
@@ -26,7 +27,7 @@ declare module Fabrique {
         static nameSpaceKeyFilter(keys: string[], namespace: string): string[];
     }
 }
-declare module Fabrique {
+declare module PhaserSuperStorage {
     module StorageAdapters {
         /**
          * Storage driver for browser's localStorage
@@ -46,7 +47,7 @@ declare module Fabrique {
         }
     }
 }
-declare module Fabrique {
+declare module PhaserSuperStorage {
     module StorageAdapters {
         interface IStorage {
             forcePromises: boolean;

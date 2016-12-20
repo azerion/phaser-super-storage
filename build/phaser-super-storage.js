@@ -1,14 +1,14 @@
 /*!
- * phaser-super-storage - version 0.2.1 
+ * phaser-super-storage - version 1.0.0 
  * A cross platform storage plugin for Phaser
  *
  * OrangeGames
- * Build at 30-11-2016
+ * Build at 20-12-2016
  * Released under MIT License 
  */
 
-var Fabrique;
-(function (Fabrique) {
+var PhaserSuperStorage;
+(function (PhaserSuperStorage) {
     var StorageAdapters;
     (function (StorageAdapters) {
         /**
@@ -99,10 +99,10 @@ var Fabrique;
             return CookieStorage;
         }());
         StorageAdapters.CookieStorage = CookieStorage;
-    })(StorageAdapters = Fabrique.StorageAdapters || (Fabrique.StorageAdapters = {}));
-})(Fabrique || (Fabrique = {}));
-var Fabrique;
-(function (Fabrique) {
+    })(StorageAdapters = PhaserSuperStorage.StorageAdapters || (PhaserSuperStorage.StorageAdapters = {}));
+})(PhaserSuperStorage || (PhaserSuperStorage = {}));
+var PhaserSuperStorage;
+(function (PhaserSuperStorage) {
     var StorageAdapters;
     (function (StorageAdapters) {
         /**
@@ -234,10 +234,10 @@ var Fabrique;
             return CordovaStorage;
         }());
         StorageAdapters.CordovaStorage = CordovaStorage;
-    })(StorageAdapters = Fabrique.StorageAdapters || (Fabrique.StorageAdapters = {}));
-})(Fabrique || (Fabrique = {}));
-var Fabrique;
-(function (Fabrique) {
+    })(StorageAdapters = PhaserSuperStorage.StorageAdapters || (PhaserSuperStorage.StorageAdapters = {}));
+})(PhaserSuperStorage || (PhaserSuperStorage = {}));
+var PhaserSuperStorage;
+(function (PhaserSuperStorage) {
     var StorageAdapters;
     (function (StorageAdapters) {
         /**
@@ -276,59 +276,59 @@ var Fabrique;
             IframeStorage.prototype.init = function () {
                 var _this = this;
                 return this.sendMessage({
-                    command: Fabrique.StorageCommand.init
+                    command: PhaserSuperStorage.StorageCommand.init
                 }).then(function () {
                     _this.enabled = true;
                 });
             };
             IframeStorage.prototype.key = function (n) {
                 return this.sendMessage({
-                    command: Fabrique.StorageCommand.key,
+                    command: PhaserSuperStorage.StorageCommand.key,
                     value: n
                 });
             };
             IframeStorage.prototype.getItem = function (key) {
                 return this.sendMessage({
-                    command: Fabrique.StorageCommand.getItem,
+                    command: PhaserSuperStorage.StorageCommand.getItem,
                     key: key
                 });
             };
             IframeStorage.prototype.setItem = function (key, value) {
                 return this.sendMessage({
-                    command: Fabrique.StorageCommand.setItem,
+                    command: PhaserSuperStorage.StorageCommand.setItem,
                     key: key,
                     value: value
                 });
             };
             IframeStorage.prototype.removeItem = function (key) {
                 return this.sendMessage({
-                    command: Fabrique.StorageCommand.removeItem,
+                    command: PhaserSuperStorage.StorageCommand.removeItem,
                     key: key
                 });
             };
             IframeStorage.prototype.clear = function () {
                 return this.sendMessage({
-                    command: Fabrique.StorageCommand.clear
+                    command: PhaserSuperStorage.StorageCommand.clear
                 });
             };
             IframeStorage.prototype.setNamespace = function (spacedName) {
                 return this.sendMessage({
-                    command: Fabrique.StorageCommand.setNamespace,
+                    command: PhaserSuperStorage.StorageCommand.setNamespace,
                     value: spacedName
                 });
             };
             IframeStorage.prototype.sendMessage = function (message) {
                 var _this = this;
                 var returnedResult;
-                if (message.command === Fabrique.StorageCommand.init) {
+                if (message.command === PhaserSuperStorage.StorageCommand.init) {
                     returnedResult = false;
                 }
                 var messageChannel = new MessageChannel();
                 return new Promise(function (resolve, reject) {
-                    if (!_this.enabled && message.command !== Fabrique.StorageCommand.init) {
+                    if (!_this.enabled && message.command !== PhaserSuperStorage.StorageCommand.init) {
                         reject('Messaging not enabled!');
                     }
-                    if (message.command === Fabrique.StorageCommand.init) {
+                    if (message.command === PhaserSuperStorage.StorageCommand.init) {
                         //small timeout to see if stuff is enabled
                         setTimeout(function () {
                             if (!returnedResult) {
@@ -338,8 +338,8 @@ var Fabrique;
                     }
                     messageChannel.port1.onmessage = function (event) {
                         console.log('Frame received message', event);
-                        var receivedMessage = Fabrique.StorageUtils.validateMessage(event.data);
-                        if (receivedMessage.command === Fabrique.StorageCommand.init) {
+                        var receivedMessage = PhaserSuperStorage.StorageUtils.validateMessage(event.data);
+                        if (receivedMessage.command === PhaserSuperStorage.StorageCommand.init) {
                             returnedResult = true;
                         }
                         if (receivedMessage.status === undefined || receivedMessage.status !== 'ok') {
@@ -349,17 +349,17 @@ var Fabrique;
                             _this.storageLength = receivedMessage.length;
                         }
                         switch (receivedMessage.command) {
-                            case Fabrique.StorageCommand.setNamespace:
+                            case PhaserSuperStorage.StorageCommand.setNamespace:
                                 _this.namespace = receivedMessage.value + ':';
-                            case Fabrique.StorageCommand.getItem:
-                            case Fabrique.StorageCommand.length:
-                            case Fabrique.StorageCommand.key:
+                            case PhaserSuperStorage.StorageCommand.getItem:
+                            case PhaserSuperStorage.StorageCommand.length:
+                            case PhaserSuperStorage.StorageCommand.key:
                                 resolve(receivedMessage.value);
                                 break;
-                            case Fabrique.StorageCommand.setItem:
-                            case Fabrique.StorageCommand.removeItem:
-                            case Fabrique.StorageCommand.clear:
-                            case Fabrique.StorageCommand.init:
+                            case PhaserSuperStorage.StorageCommand.setItem:
+                            case PhaserSuperStorage.StorageCommand.removeItem:
+                            case PhaserSuperStorage.StorageCommand.clear:
+                            case PhaserSuperStorage.StorageCommand.init:
                                 resolve(receivedMessage.status);
                                 break;
                             default:
@@ -367,7 +367,7 @@ var Fabrique;
                                 break;
                         }
                     };
-                    if (_this.enabled || message.command === Fabrique.StorageCommand.init) {
+                    if (_this.enabled || message.command === PhaserSuperStorage.StorageCommand.init) {
                         console.log('Sending message to parent: ', message);
                         window.parent.postMessage(message, _this.expectedOrigin, [messageChannel.port2]);
                     }
@@ -376,10 +376,10 @@ var Fabrique;
             return IframeStorage;
         }());
         StorageAdapters.IframeStorage = IframeStorage;
-    })(StorageAdapters = Fabrique.StorageAdapters || (Fabrique.StorageAdapters = {}));
-})(Fabrique || (Fabrique = {}));
-var Fabrique;
-(function (Fabrique) {
+    })(StorageAdapters = PhaserSuperStorage.StorageAdapters || (PhaserSuperStorage.StorageAdapters = {}));
+})(PhaserSuperStorage || (PhaserSuperStorage = {}));
+var PhaserSuperStorage;
+(function (PhaserSuperStorage) {
     var StorageAdapters;
     (function (StorageAdapters) {
         /**
@@ -395,14 +395,14 @@ var Fabrique;
             Object.defineProperty(LocalStorage.prototype, "length", {
                 get: function () {
                     var keys = Object.keys(localStorage);
-                    return Fabrique.StorageUtils.nameSpaceKeyFilter(keys, this.namespace).length;
+                    return PhaserSuperStorage.StorageUtils.nameSpaceKeyFilter(keys, this.namespace).length;
                 },
                 enumerable: true,
                 configurable: true
             });
             LocalStorage.prototype.key = function (n) {
                 var keys = Object.keys(localStorage);
-                var spacedKeys = Fabrique.StorageUtils.nameSpaceKeyFilter(keys, this.namespace);
+                var spacedKeys = PhaserSuperStorage.StorageUtils.nameSpaceKeyFilter(keys, this.namespace);
                 var item = localStorage.getItem(spacedKeys[n]);
                 if (this.forcePromises) {
                     return this.promisefy(item);
@@ -430,7 +430,7 @@ var Fabrique;
             };
             LocalStorage.prototype.clear = function () {
                 var keys = Object.keys(localStorage);
-                var spacedKeys = Fabrique.StorageUtils.nameSpaceKeyFilter(keys, this.namespace);
+                var spacedKeys = PhaserSuperStorage.StorageUtils.nameSpaceKeyFilter(keys, this.namespace);
                 for (var i = 0; i < spacedKeys.length; i++) {
                     localStorage.removeItem(spacedKeys[i]);
                 }
@@ -454,100 +454,97 @@ var Fabrique;
             return LocalStorage;
         }());
         StorageAdapters.LocalStorage = LocalStorage;
-    })(StorageAdapters = Fabrique.StorageAdapters || (Fabrique.StorageAdapters = {}));
-})(Fabrique || (Fabrique = {}));
-var Fabrique;
-(function (Fabrique) {
-    var Plugins;
-    (function (Plugins) {
-        var SuperStorage = (function () {
-            function SuperStorage(game) {
-                if (undefined !== game) {
-                    Object.defineProperty(game, 'storage', {
-                        value: this
-                    });
+    })(StorageAdapters = PhaserSuperStorage.StorageAdapters || (PhaserSuperStorage.StorageAdapters = {}));
+})(PhaserSuperStorage || (PhaserSuperStorage = {}));
+var PhaserSuperStorage;
+(function (PhaserSuperStorage) {
+    var StoragePlugin = (function () {
+        function StoragePlugin(game) {
+            if (undefined !== game) {
+                Object.defineProperty(game, 'storage', {
+                    value: this
+                });
+            }
+            else {
+                if (StoragePlugin.instance === null) {
+                    StoragePlugin.instance = this;
                 }
                 else {
-                    if (SuperStorage.instance === null) {
-                        SuperStorage.instance = this;
-                    }
-                    else {
-                        return SuperStorage.instance;
-                    }
-                }
-                if (Fabrique.StorageUtils.isLocalStorageSupport()) {
-                    this.setAdapter(new Fabrique.StorageAdapters.LocalStorage());
-                }
-                else {
-                    this.setAdapter(new Fabrique.StorageAdapters.CookieStorage());
+                    return StoragePlugin.instance;
                 }
             }
-            SuperStorage.prototype.setAdapter = function (storageAdapter) {
-                this.storage = storageAdapter;
-            };
-            Object.defineProperty(SuperStorage.prototype, "forcePromises", {
-                get: function () {
-                    return this.storage.forcePromises;
-                },
-                set: function (forceIt) {
-                    this.storage.forcePromises = forceIt;
-                },
-                enumerable: true,
-                configurable: true
-            });
-            Object.defineProperty(SuperStorage.prototype, "length", {
-                get: function () {
-                    if (this.storage === null) {
-                        return 0;
-                    }
-                    return this.storage.length;
-                },
-                enumerable: true,
-                configurable: true
-            });
-            SuperStorage.prototype.setNamespace = function (namedSpace) {
-                if (this.storage !== null) {
-                    return this.storage.setNamespace(namedSpace);
-                }
-            };
-            SuperStorage.prototype.key = function (n) {
+            if (PhaserSuperStorage.StorageUtils.isLocalStorageSupport()) {
+                this.setAdapter(new PhaserSuperStorage.StorageAdapters.LocalStorage());
+            }
+            else {
+                this.setAdapter(new PhaserSuperStorage.StorageAdapters.CookieStorage());
+            }
+        }
+        StoragePlugin.prototype.setAdapter = function (storageAdapter) {
+            this.storage = storageAdapter;
+        };
+        Object.defineProperty(StoragePlugin.prototype, "forcePromises", {
+            get: function () {
+                return this.storage.forcePromises;
+            },
+            set: function (forceIt) {
+                this.storage.forcePromises = forceIt;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(StoragePlugin.prototype, "length", {
+            get: function () {
                 if (this.storage === null) {
-                    return '';
+                    return 0;
                 }
-                return this.storage.key(n);
-            };
-            SuperStorage.prototype.getItem = function (key) {
-                if (this.storage === null) {
-                    return null;
-                }
-                return this.storage.getItem(key);
-            };
-            SuperStorage.prototype.setItem = function (key, value) {
-                if (this.storage !== null) {
-                    return this.storage.setItem(key, value);
-                }
-            };
-            SuperStorage.prototype.removeItem = function (key) {
-                if (this.storage !== null) {
-                    return this.storage.removeItem(key);
-                }
-            };
-            SuperStorage.prototype.clear = function () {
-                if (this.storage !== null) {
-                    return this.storage.clear();
-                }
-            };
-            SuperStorage.instance = null;
-            return SuperStorage;
-        }());
-        Plugins.SuperStorage = SuperStorage;
-    })(Plugins = Fabrique.Plugins || (Fabrique.Plugins = {}));
-})(Fabrique || (Fabrique = {}));
+                return this.storage.length;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        StoragePlugin.prototype.setNamespace = function (namedSpace) {
+            if (this.storage !== null) {
+                return this.storage.setNamespace(namedSpace);
+            }
+        };
+        StoragePlugin.prototype.key = function (n) {
+            if (this.storage === null) {
+                return '';
+            }
+            return this.storage.key(n);
+        };
+        StoragePlugin.prototype.getItem = function (key) {
+            if (this.storage === null) {
+                return null;
+            }
+            return this.storage.getItem(key);
+        };
+        StoragePlugin.prototype.setItem = function (key, value) {
+            if (this.storage !== null) {
+                return this.storage.setItem(key, value);
+            }
+        };
+        StoragePlugin.prototype.removeItem = function (key) {
+            if (this.storage !== null) {
+                return this.storage.removeItem(key);
+            }
+        };
+        StoragePlugin.prototype.clear = function () {
+            if (this.storage !== null) {
+                return this.storage.clear();
+            }
+        };
+        StoragePlugin.instance = null;
+        return StoragePlugin;
+    }());
+    PhaserSuperStorage.StoragePlugin = StoragePlugin;
+})(PhaserSuperStorage || (PhaserSuperStorage = {}));
 if (window.Phaser !== undefined) {
-    Phaser.Utils.mixinPrototype(Fabrique.Plugins.SuperStorage, Phaser.Plugin);
+    Phaser.Utils.mixinPrototype(PhaserSuperStorage.StoragePlugin, Phaser.Plugin);
 }
-var Fabrique;
-(function (Fabrique) {
+var PhaserSuperStorage;
+(function (PhaserSuperStorage) {
     (function (StorageCommand) {
         StorageCommand[StorageCommand["init"] = 0] = "init";
         StorageCommand[StorageCommand["setItem"] = 1] = "setItem";
@@ -557,8 +554,9 @@ var Fabrique;
         StorageCommand[StorageCommand["setNamespace"] = 5] = "setNamespace";
         StorageCommand[StorageCommand["length"] = 6] = "length";
         StorageCommand[StorageCommand["key"] = 7] = "key";
-    })(Fabrique.StorageCommand || (Fabrique.StorageCommand = {}));
-    var StorageCommand = Fabrique.StorageCommand;
+        StorageCommand[StorageCommand["error"] = 8] = "error";
+    })(PhaserSuperStorage.StorageCommand || (PhaserSuperStorage.StorageCommand = {}));
+    var StorageCommand = PhaserSuperStorage.StorageCommand;
     var StorageUtils = (function () {
         function StorageUtils() {
         }
@@ -588,6 +586,6 @@ var Fabrique;
         };
         return StorageUtils;
     }());
-    Fabrique.StorageUtils = StorageUtils;
-})(Fabrique || (Fabrique = {}));
+    PhaserSuperStorage.StorageUtils = StorageUtils;
+})(PhaserSuperStorage || (PhaserSuperStorage = {}));
 //# sourceMappingURL=phaser-super-storage.js.map

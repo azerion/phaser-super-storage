@@ -1,4 +1,4 @@
-module Fabrique {
+module PhaserSuperStorage {
     export module StorageAdapters {
         interface ICookieStore {
             [name: string]: string;

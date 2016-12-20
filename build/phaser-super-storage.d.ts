@@ -1,5 +1,5 @@
 /// <reference types="es6-promise" />
-declare module Fabrique {
+declare module PhaserSuperStorage {
     module StorageAdapters {
         /**
          * Storage driver for cookies
@@ -22,7 +22,7 @@ declare module Fabrique {
         }
     }
 }
-declare module Fabrique {
+declare module PhaserSuperStorage {
     module StorageAdapters {
         /**
          * Storage driver for browser's localStorage
@@ -45,7 +45,7 @@ declare module Fabrique {
         }
     }
 }
-declare module Fabrique {
+declare module PhaserSuperStorage {
     module StorageAdapters {
         interface IStorage {
             forcePromises: boolean;
@@ -60,7 +60,7 @@ declare module Fabrique {
         }
     }
 }
-declare module Fabrique {
+declare module PhaserSuperStorage {
     module StorageAdapters {
         /**
          * Storage driver for browser's localStorage
@@ -84,7 +84,7 @@ declare module Fabrique {
         }
     }
 }
-declare module Fabrique {
+declare module PhaserSuperStorage {
     module StorageAdapters {
         /**
          * Storage driver for browser's localStorage
@@ -104,28 +104,29 @@ declare module Fabrique {
         }
     }
 }
-declare module Fabrique {
-    module Plugins {
-        interface ISuperStorageGame extends Phaser.Game {
-            storage: Fabrique.Plugins.SuperStorage;
-        }
-        class SuperStorage {
-            private storage;
-            private static instance;
-            constructor(game?: Phaser.Game);
-            setAdapter(storageAdapter: StorageAdapters.IStorage): void;
-            forcePromises: boolean;
-            readonly length: number;
-            setNamespace(namedSpace: string): void | Promise<void>;
-            key(n: number): string | Promise<string>;
-            getItem(key: string): any | Promise<any>;
-            setItem(key: string, value: string): void | Promise<void>;
-            removeItem(key: string): void | Promise<void>;
-            clear(): void | Promise<void>;
-        }
+declare module 'phaser-super-storage' {
+    export = PhaserSuperStorage;
+}
+declare module PhaserSuperStorage {
+    interface ISuperStorageGame extends Phaser.Game {
+        storage: PhaserSuperStorage.StoragePlugin;
+    }
+    class StoragePlugin {
+        private storage;
+        private static instance;
+        constructor(game?: Phaser.Game);
+        setAdapter(storageAdapter: StorageAdapters.IStorage): void;
+        forcePromises: boolean;
+        readonly length: number;
+        setNamespace(namedSpace: string): void | Promise<void>;
+        key(n: number): string | Promise<string>;
+        getItem(key: string): any | Promise<any>;
+        setItem(key: string, value: string): void | Promise<void>;
+        removeItem(key: string): void | Promise<void>;
+        clear(): void | Promise<void>;
     }
 }
-declare module Fabrique {
+declare module PhaserSuperStorage {
     interface IStorageMessage {
         command: StorageCommand;
         status?: string;
@@ -142,6 +143,7 @@ declare module Fabrique {
         setNamespace = 5,
         length = 6,
         key = 7,
+        error = 8,
     }
     class StorageUtils {
         static isLocalStorageSupport(): boolean;
