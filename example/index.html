@@ -7,8 +7,6 @@
 
     <title>Phaser Super Storage example</title>
 
-    <script type="text/javascript" src="//imasdk.googleapis.com/js/sdkloader/ima3.js"></script>
-
     <script type="text/javascript" src="../node_modules/phaser/build/phaser.js"></script>
     <script type="text/javascript" src="../build/phaser-super-storage.js"></script>
 
@@ -23,7 +21,7 @@
     <script type="text/javascript">
         var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game-container', { init: init, create: create, preload: preload});
         Phaser.Device.whenReady(function () {
-            game.plugins.add(Fabrique.Plugins.SuperStorage);
+            game.plugins.add(PhaserSuperStorage.StoragePlugin);
         });
 
         function init() {
