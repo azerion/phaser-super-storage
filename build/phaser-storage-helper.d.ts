@@ -1,7 +1,4 @@
 /// <reference types="es6-promise" />
-import StorageCommand = PhaserSuperStorage.StorageCommand;
-import StorageUtils = PhaserSuperStorage.StorageUtils;
-import LocalStorage = PhaserSuperStorage.StorageAdapters.LocalStorage;
 declare module PhaserSuperStorage {
     interface IStorageMessage {
         command: StorageCommand;
@@ -62,3 +59,6 @@ declare module PhaserSuperStorage {
         }
     }
 }
+import StorageCommand = PhaserSuperStorage.StorageCommand;
+import StorageUtils = PhaserSuperStorage.StorageUtils;
+import LocalStorage = PhaserSuperStorage.StorageAdapters.LocalStorage;

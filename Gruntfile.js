@@ -32,7 +32,7 @@ module.exports = function (grunt) {
             },
             helper: {
                 tsconfig: './config/tsconfig.json',
-                src: ['ts/Utils/*.ts', 'ts/StorageAdapters/LocalStorage.ts', 'ts/StorageAdapters/IStorage.ts'],
+                src: ['ts/Utils/Storage.ts', 'ts/StorageAdapters/LocalStorage.ts', 'ts/StorageAdapters/IStorage.ts', 'ts/Utils/Helper.ts'],
                 dest: 'build/phaser-storage-helper.js'
             }
         },
@@ -111,7 +111,7 @@ module.exports = function (grunt) {
     ]);
 
     grunt.registerTask('dev', [
-        'ts:dist',
+        'ts',
         'connect',
         'watch'
     ]);
