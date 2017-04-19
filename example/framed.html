@@ -21,7 +21,7 @@
     <script type="text/javascript">
         var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game-container');
         Phaser.Device.whenReady(function () {
-            game.plugins.add(PhaserSuperStorage.StoragePlugin);
+            game.plugins.add(PhaserSuperStorage.SuperStorage);
         });
 
         var Boot = {
@@ -36,7 +36,7 @@
         };
         game.state.add('boot', Boot, false);
 
-        let iframeAdapter = new PhaserSuperStorage.StorageAdapters.IframeStorage('', document.referrer);
+        var iframeAdapter = new PhaserSuperStorage.StorageAdapters.IframeStorage('', document.referrer);
         iframeAdapter.init().then(function () {
             console.log('Storage helper found, enablind iframe adapter');
             game.storage.setAdapter(iframeAdapter);

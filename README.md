@@ -25,7 +25,7 @@ Next up you'd want to add it to your list of js sources you load into your game
 
 After adding the script to the page you can activate it by enabling the plugin:
 ```javascript
-game.add.plugin(Fabrique.Plugins.SuperStorage);
+game.add.plugin(PhaserSuperStorage.StoragePlugin);
 ```
 
 Usage
@@ -133,7 +133,7 @@ Cordova
 -------
 You can now also use the CordovaStorage adapter, which uses the NativeStorage plugin of cordova. This prevents the auto-deletion of data on IOS when not having enough memory. If you are using the adapter, please note that passing the namespace in the constructor is not allowed and that it is only testable in a cordova application. It can be enabled by the following command:
 ```javascript
-game.storage.setAdapter(new Fabrique.StorageAdapters.CordovaStorage());
+game.storage.setAdapter(new PhaserSuperStorage.StorageAdapters.CordovaStorage());
 ```
 
 

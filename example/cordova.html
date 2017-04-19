@@ -23,7 +23,7 @@
 </head>
 <body>
 <div id="content-wrapper">
-    <p id="indicator">NOT LOADsED</p>
+    <p id="indicator">NOT LOADED</p>
     <div id="game-container"></div>
 </div>
 </body>
@@ -44,11 +44,11 @@
 
         var game = new Phaser.Game(80, 60, Phaser.AUTO, 'game-container', {init: init, create: create, preload: preload});
         Phaser.Device.whenReady(function () {
-            game.plugins.add(Fabrique.Plugins.SuperStorage);
+            game.plugins.add(PhaserSuperStorage.StoragePlugin);
         });
 
         function init() {
-            game.storage.setAdapter(new Fabrique.StorageAdapters.CordovaStorage());
+            game.storage.setAdapter(new PhaserSuperStorage.StorageAdapters.CordovaStorage());
 
             // Set namespace and wait for it to load the keys
             game.storage.setNamespace('as').then(function () {
