@@ -1,9 +1,9 @@
 /*!
- * phaser-super-storage - version 1.0.1 
+ * phaser-super-storage - version 1.0.2 
  * A cross platform storage plugin for Phaser
  *
  * OrangeGames
- * Build at 05-04-2017
+ * Build at 08-06-2017
  * Released under MIT License 
  */
 
@@ -143,6 +143,10 @@ var LocalStorage = PhaserSuperStorage.StorageAdapters.LocalStorage;
         }
         var message = StorageUtils.validateMessage(event.data);
         var source = event.ports[0];
+        if (typeof source === 'undefined' || !source) {
+            //No source to return too, skipping
+            return;
+        }
         var sendError = function (command, errorMessage) {
             source.postMessage({
                 status: 'error',
