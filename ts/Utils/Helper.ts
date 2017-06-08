@@ -15,6 +15,11 @@ import LocalStorage = PhaserSuperStorage.StorageAdapters.LocalStorage;
         let message: PhaserSuperStorage.IStorageMessage = StorageUtils.validateMessage(event.data);
         let source: MessagePort = event.ports[0];
 
+        if (typeof source === 'undefined' || !source) {
+            //No source to return too, skipping
+            return;
+        }
+
         let sendError: (command: StorageCommand, message: string) => void  = (command: StorageCommand, errorMessage: string): void => {
             source.postMessage(<PhaserSuperStorage.IStorageMessage>{
                 status: 'error',
