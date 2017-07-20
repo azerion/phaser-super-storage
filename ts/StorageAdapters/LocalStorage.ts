@@ -19,45 +19,57 @@ module PhaserSuperStorage {
             }
 
             public key(n: number): any | Promise<any> {
+                return this.forcePromises ?
+                    this.promisefy(this._key, <any>arguments) :
+                    this._key(n);
+            }
+
+            private _key(n: number): any {
                 let keys: string[] = Object.keys(localStorage);
                 let spacedKeys: string[] = StorageUtils.nameSpaceKeyFilter(keys, this.namespace);
 
                 let item: any = localStorage.getItem(spacedKeys[n]);
 
-                if (this.forcePromises) {
-                    return this.promisefy(item);
-                }
-
                 return item;
             }
 
             public getItem(key: string): any | Promise<any> {
-                let item: any = localStorage.getItem(this.namespace + key);
+                return this.forcePromises ?
+                    this.promisefy(this._getItem, <any>arguments) :
+                    this._getItem(key);
+            }
 
-                if (this.forcePromises) {
-                    return this.promisefy(item);
-                }
-
-                return item;
+            private _getItem(key: string): string {
+                return localStorage.getItem(this.namespace + key);
             }
 
             public setItem(key: string, value: any): void | Promise<void> {
-                localStorage.setItem(this.namespace + key, value);
+                return this.forcePromises ?
+                    this.promisefy(this._setItem, <any>arguments) :
+                    this._setItem(key, value);
+            }
 
-                if (this.forcePromises) {
-                    return this.promisefy(null);
-                }
+            private _setItem(key: string, value: any): void {
+                return localStorage.setItem(this.namespace + key, value);
             }
 
             public removeItem(key: string): void | Promise<void> {
-                localStorage.removeItem(this.namespace + key);
+                return this.forcePromises ?
+                    this.promisefy(this._removeItem, <any>arguments) :
+                    this._removeItem(key);
+            }
 
-                if (this.forcePromises) {
-                    return this.promisefy(null);
-                }
+            private _removeItem(key: string): void {
+                return localStorage.removeItem(this.namespace + key);
             }
 
             public clear(): void | Promise<void> {
+                return this.forcePromises ?
+                    this.promisefy(this._clear, <any>arguments) :
+                    this._clear();
+            }
+
+            private _clear(): void {
                 let keys: string[] = Object.keys(localStorage);
                 let spacedKeys: string[] = StorageUtils.nameSpaceKeyFilter(keys, this.namespace);
 
@@ -65,24 +77,24 @@ module PhaserSuperStorage {
                     localStorage.removeItem(spacedKeys[i]);
                 }
 
-                if (this.forcePromises) {
-                    return this.promisefy(null);
-                }
+                return;
             }
 
             public setNamespace(spacedName: string): void | Promise<void> {
+                return this.forcePromises ?
+                    this.promisefy(this._setNameSpace, <any>arguments) :
+                    this._setNameSpace(spacedName);
+            }
+
+            private _setNameSpace(spacedName: string): void {
                 if (spacedName) {
                     this.namespace = spacedName + ':';
                 }
-
-                if (this.forcePromises) {
-                    return this.promisefy(spacedName);
-                }
             }
 
-            private promisefy(value: any): Promise<any> {
+            private promisefy(value: any, args: any): Promise<any> {
                 return new Promise((resolve: (value?: any | Thenable<any>) => void, reject: (error?: any) => void) => {
-                    resolve(value);
+                    resolve(value.apply(this, args));
                 });
             }
         }

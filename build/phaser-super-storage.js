@@ -1,9 +1,9 @@
 /*!
- * phaser-super-storage - version 1.0.2 
+ * phaser-super-storage - version 1.0.3 
  * A cross platform storage plugin for Phaser
  *
  * OrangeGames
- * Build at 08-06-2017
+ * Build at 20-07-2017
  * Released under MIT License 
  */
 
@@ -401,54 +401,67 @@ var PhaserSuperStorage;
                 configurable: true
             });
             LocalStorage.prototype.key = function (n) {
+                return this.forcePromises ?
+                    this.promisefy(this._key, arguments) :
+                    this._key(n);
+            };
+            LocalStorage.prototype._key = function (n) {
                 var keys = Object.keys(localStorage);
                 var spacedKeys = PhaserSuperStorage.StorageUtils.nameSpaceKeyFilter(keys, this.namespace);
                 var item = localStorage.getItem(spacedKeys[n]);
-                if (this.forcePromises) {
-                    return this.promisefy(item);
-                }
                 return item;
             };
             LocalStorage.prototype.getItem = function (key) {
-                var item = localStorage.getItem(this.namespace + key);
-                if (this.forcePromises) {
-                    return this.promisefy(item);
-                }
-                return item;
+                return this.forcePromises ?
+                    this.promisefy(this._getItem, arguments) :
+                    this._getItem(key);
+            };
+            LocalStorage.prototype._getItem = function (key) {
+                return localStorage.getItem(this.namespace + key);
             };
             LocalStorage.prototype.setItem = function (key, value) {
-                localStorage.setItem(this.namespace + key, value);
-                if (this.forcePromises) {
-                    return this.promisefy(null);
-                }
+                return this.forcePromises ?
+                    this.promisefy(this._setItem, arguments) :
+                    this._setItem(key, value);
+            };
+            LocalStorage.prototype._setItem = function (key, value) {
+                return localStorage.setItem(this.namespace + key, value);
             };
             LocalStorage.prototype.removeItem = function (key) {
-                localStorage.removeItem(this.namespace + key);
-                if (this.forcePromises) {
-                    return this.promisefy(null);
-                }
+                return this.forcePromises ?
+                    this.promisefy(this._removeItem, arguments) :
+                    this._removeItem(key);
+            };
+            LocalStorage.prototype._removeItem = function (key) {
+                return localStorage.removeItem(this.namespace + key);
             };
             LocalStorage.prototype.clear = function () {
+                return this.forcePromises ?
+                    this.promisefy(this._clear, arguments) :
+                    this._clear();
+            };
+            LocalStorage.prototype._clear = function () {
                 var keys = Object.keys(localStorage);
                 var spacedKeys = PhaserSuperStorage.StorageUtils.nameSpaceKeyFilter(keys, this.namespace);
                 for (var i = 0; i < spacedKeys.length; i++) {
                     localStorage.removeItem(spacedKeys[i]);
                 }
-                if (this.forcePromises) {
-                    return this.promisefy(null);
-                }
+                return;
             };
             LocalStorage.prototype.setNamespace = function (spacedName) {
+                return this.forcePromises ?
+                    this.promisefy(this._setNameSpace, arguments) :
+                    this._setNameSpace(spacedName);
+            };
+            LocalStorage.prototype._setNameSpace = function (spacedName) {
                 if (spacedName) {
                     this.namespace = spacedName + ':';
                 }
-                if (this.forcePromises) {
-                    return this.promisefy(spacedName);
-                }
             };
-            LocalStorage.prototype.promisefy = function (value) {
+            LocalStorage.prototype.promisefy = function (value, args) {
+                var _this = this;
                 return new Promise(function (resolve, reject) {
-                    resolve(value);
+                    resolve(value.apply(_this, args));
                 });
             };
             return LocalStorage;
