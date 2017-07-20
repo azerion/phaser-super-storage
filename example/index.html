@@ -22,6 +22,7 @@
         var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game-container', { init: init, create: create, preload: preload});
         Phaser.Device.whenReady(function () {
             game.plugins.add(PhaserSuperStorage.StoragePlugin);
+            game.storage.forcePromises = true;
         });
 
         function init() {
@@ -29,11 +30,17 @@
         }
 
         function preload() {
-            game.storage.length;
+            game.storage.setItem('foo', 'bar');
         }
 
         function create(){
-
+            game.storage.getItem('foo')
+                .then(function (result) {
+                    console.log(result, game.storage.length);
+                })
+                .catch(function(error) {
+                    console.log('Oh no!', error);
+                });
         }
     </script>
 </head>

@@ -20,10 +20,6 @@
     <!-- Game we want to track -->
     <script type="text/javascript">
         var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game-container');
-        Phaser.Device.whenReady(function () {
-            game.plugins.add(PhaserSuperStorage.SuperStorage);
-        });
-
         var Boot = {
             preload: function () {
                 game.storage.setItem('foo', 'bar');
@@ -36,15 +32,19 @@
         };
         game.state.add('boot', Boot, false);
 
-        var iframeAdapter = new PhaserSuperStorage.StorageAdapters.IframeStorage('', document.referrer);
-        iframeAdapter.init().then(function () {
-            console.log('Storage helper found, enablind iframe adapter');
-            game.storage.setAdapter(iframeAdapter);
-            game.state.start('boot');
-        }).catch(function (e) {
-            console.log('Unable to find storage helper, continuing with regular adapter', e);
-            game.storage.forcePromises = true;
-            game.state.start('boot');
+        Phaser.Device.whenReady(function () {
+            game.plugins.add(PhaserSuperStorage.StoragePlugin);
+
+            var iframeAdapter = new PhaserSuperStorage.StorageAdapters.IframeStorage('', document.referrer);
+            iframeAdapter.init().then(function () {
+                console.log('Storage helper found, enablind iframe adapter');
+                game.storage.setAdapter(iframeAdapter);
+                game.state.start('boot');
+            }).catch(function (e) {
+                console.log('Unable to find storage helper, continuing with regular adapter', e);
+                game.storage.forcePromises = true;
+                game.state.start('boot');
+            });
         });
     </script>
 </head>
