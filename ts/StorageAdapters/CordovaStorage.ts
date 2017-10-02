@@ -62,7 +62,7 @@ module PhaserSuperStorage {
 
             public removeItem(key: string): Promise<void> {
                 return new Promise((resolve: (value?: void) => void, reject: (error?: INativeStorageError) => void) => {
-                    NativeStorage.remove(this.namespace + ':' + key, () => {
+                    NativeStorage.remove(this.namespace + key, () => {
                         let id: number = this.keys.indexOf(key);
                         if (id >= 0) {
                             this.keys.splice(id, 1);
@@ -79,7 +79,7 @@ module PhaserSuperStorage {
                 return new Promise((resolve: (value?: void) => void, reject: (error?: INativeStorageError) => void) => {
                     let counter: number = 0;
                     for (let i: number = 0; i < this.keys.length; i++) {
-                        NativeStorage.remove(this.namespace + ':' + this.keys[i], () => {
+                        NativeStorage.remove(this.namespace + this.keys[i], () => {
                             if (++counter >= this.keys.length) {
                                 this.keys = [];
                                 this.save();
