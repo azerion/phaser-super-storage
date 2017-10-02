@@ -1,9 +1,9 @@
 /*!
- * phaser-super-storage - version 1.0.3 
+ * phaser-super-storage - version 1.0.4 
  * A cross platform storage plugin for Phaser
  *
  * OrangeGames
- * Build at 20-07-2017
+ * Build at 02-10-2017
  * Released under MIT License 
  */
 
@@ -170,7 +170,7 @@ var PhaserSuperStorage;
             CordovaStorage.prototype.removeItem = function (key) {
                 var _this = this;
                 return new Promise(function (resolve, reject) {
-                    NativeStorage.remove(_this.namespace + ':' + key, function () {
+                    NativeStorage.remove(_this.namespace + key, function () {
                         var id = _this.keys.indexOf(key);
                         if (id >= 0) {
                             _this.keys.splice(id, 1);
@@ -187,7 +187,7 @@ var PhaserSuperStorage;
                 return new Promise(function (resolve, reject) {
                     var counter = 0;
                     for (var i = 0; i < _this.keys.length; i++) {
-                        NativeStorage.remove(_this.namespace + ':' + _this.keys[i], function () {
+                        NativeStorage.remove(_this.namespace + _this.keys[i], function () {
                             if (++counter >= _this.keys.length) {
                                 _this.keys = [];
                                 _this.save();
