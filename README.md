@@ -33,7 +33,7 @@ Usage
 When you load the plugin, it automatically checks for availability of localStorage and fallbacks to cookies if it's not available.
 Both of these are StorageAdapters and will be overwritten if you register a custom StorageAdaper, but more on this later.
 
-The plugin will append the Phaser game object with a storage object, you can reference this object with exactly the same API as localStorage, and should therefor be fairly easy for you to implement.
+The plugin will append the Phaser game object with a storage object, you can reference this object with exactly the same API as localStorage, and should therefore be fairly easy for you to implement.
 
 ```javascript
 //Store Tetris at FavoriteGame
@@ -57,7 +57,7 @@ game.storage.clear();
 
 Namespaces
 ----------
-If you are like us, and put multiple games on the same domain, you might want to add namespaces to your localStorage. Namespaces get prepended to any key value pair you set, and all API calls to the storage object are segeregated by namespaces.
+If you are like us, and put multiple games on the same domain, you might want to add namespaces to your localStorage. Namespaces get prepended to any key value pair you set, and all API calls to the storage object are segregated by namespaces.
 This allows you to set a 'score' key for multiple games on the same domain, and they'll always get their own stored value
 
 ```javascript
@@ -76,8 +76,8 @@ var value = game.storage.get('score'); // null
 
 Promises
 --------
-Both Cookies and localStorage work synchronous, meaning you immediatly get a return value after calling a funtion, e.g; getItem('key');
-But when you are using a HTTP service (Amazon Cognito Sync, or custom REST server) or when you are using the iFrameStorage supported by this library, the results are comming back in an asynchronous manner.
+Both Cookies and localStorage work synchronous, meaning you immediately get a return value after calling a function, e.g; `getItem('key');`
+But when you are using a HTTP service (Amazon Cognito Sync, or custom REST server) or when you are using the iFrameStorage supported by this library, the results are coming back in an asynchronous manner.
 In order for you to parse your result nicely phaser-super-storage uses Promises to get you the result.
 
 It is also possible to enable promises on the Cookie and localStorage adapters by setting forcePromises to true.
@@ -103,7 +103,7 @@ The actual Storage of content happens within these so-called StorageAdapters. Ba
     //The amount of items in the storage
     length: number;
 
-    //The namespace for the current storge
+    //The namespace for the current storage
     namespace:string;
 
     //Get an item from the storage
@@ -127,11 +127,11 @@ The actual Storage of content happens within these so-called StorageAdapters. Ba
 
 Local & Cookie Storage
 ----------------------
-The default usage of phaser-super-storage require the LocalStorage and CookieStorage adapter. It will always try to use the LocalStorage Adapater, but when all fails it falls back to Cookie sotrage, no configuration needed!
+The default usage of phaser-super-storage require the LocalStorage and CookieStorage adapter. It will always try to use the LocalStorage Adapater, but when all fails it falls back to Cookie storage, no configuration needed!
 
 Cordova
 -------
-You can now also use the CordovaStorage adapter, which uses the NativeStorage plugin of cordova. This prevents the auto-deletion of data on IOS when not having enough memory. If you are using the adapter, please note that passing the namespace in the constructor is not allowed and that it is only testable in a cordova application. It can be enabled by the following command:
+You can now also use the CordovaStorage adapter, which uses the NativeStorage plugin of Cordova. This prevents the auto-deletion of data on IOS when not having enough memory. If you are using the adapter, please note that passing the namespace in the constructor is not allowed and that it is only testable in a Cordova application. It can be enabled by the following command:
 ```javascript
 game.storage.setAdapter(new PhaserSuperStorage.StorageAdapters.CordovaStorage());
 ```
@@ -139,7 +139,7 @@ game.storage.setAdapter(new PhaserSuperStorage.StorageAdapters.CordovaStorage())
 
 Iframe
 ------
-We publish our games on HTML5 game portals trough the usage of iFrames, a downside of this is that for iOS both localStorage and Cookies aren't persisted for iframes. In order to counter this we included an IframeStorage adapter that should be set in the game, than the helper script included in the build folder should be loaded in the parent frame.
+We publish our games on HTML5 game portals through the usage of iframes, a downside of this is that for iOS both localStorage and Cookies aren't persisted for iframes. In order to counter this we included an IframeStorage adapter that should be set in the game, then the helper script included in the build folder should be loaded in the parent frame.
 This way we'll utilize the storage capacity of the parent frame to store our data
 
 ```html
@@ -166,7 +166,7 @@ iframeAdapter.init().then(function() {
 
 Caveats
 =======
-Altho we try our best to store data, in some cases you can consider data lost when a user closes his browser or ends his session. I'm talking offcourse about private browsing. Both LocalStorage and Cookies will be cleared, so if you want to keep userdata alive their I suggest you try to get people to login and use a custom StorageAdapter to save the data server sided. Please note that we use the colon as namespace appendix, so we advice you not to use it yourself.   
+Although we try our best to store data, in some cases you can consider data lost when a user closes his browser or ends his session. I'm talking of course about private browsing. Both LocalStorage and Cookies will be cleared, so if you want to keep userdata alive there I suggest you try to get people to login and use a custom StorageAdapter to save the data server-side. Please note that we use the colon as namespace appendix, so we advice you not to use it yourself.   
 
 Disclaimer
 ==========
