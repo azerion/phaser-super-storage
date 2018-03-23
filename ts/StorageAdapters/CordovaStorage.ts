@@ -1,4 +1,5 @@
 import IStorage from './IStorage';
+import {Promise} from 'es6-promise';
 
 interface INativeStorage {
     getItem(key: string, onSucceed: (value: string) => void, onError: (error: any) => void): void;

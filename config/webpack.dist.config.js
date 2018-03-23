@@ -39,33 +39,29 @@ module.exports = function (env) {
                     root: basePath
                 }
             ),
-            //new DeclarationBundlerPlugin({
-            //    moduleName:'PhaserSuperStorage',
-            //    out: path.join(basePath, 'build', config.config.name + '.min.js'),
-            //}),
-            new ForkTsCheckerNotifierWebpackPlugin({alwaysNotify: true}),
-            new ForkTsCheckerWebpackPlugin({
-                    checkSyntacticErrors: true,
-                    tslint: path.join(basePath, 'tslint.json'),
-                    tsconfig: path.join(basePath, 'tsconfig.json')
-                }
-            ),
-            //new webpack.optimize.UglifyJsPlugin({
-            //        exclude: /\/node_modules/,
-            //        compress: {
-            //            sequences: true,
-            //            dead_code: true,
-            //            conditionals: true,
-            //            booleans: true,
-            //            unused: true,
-            //            if_return: true,
-            //            join_vars: true,
-            //            drop_console: true,
-            //        },
-            //        mangle: false,
-            //        sourceMap: true
+            //new ForkTsCheckerNotifierWebpackPlugin({alwaysNotify: true}),
+            //new ForkTsCheckerWebpackPlugin({
+            //        checkSyntacticErrors: true,
+            //        tslint: path.join(basePath, 'tslint.json'),
+            //        tsconfig: path.join(basePath, 'tsconfig.json')
             //    }
             //),
+            new webpack.optimize.UglifyJsPlugin({
+                    exclude: /\/node_modules/,
+                    compress: {
+                        sequences: true,
+                        dead_code: true,
+                        conditionals: true,
+                        booleans: true,
+                        unused: true,
+                        if_return: true,
+                        join_vars: true,
+                        drop_console: true,
+                    },
+                    mangle: false,
+                    sourceMap: true
+                }
+            ),
         ]
     );
     return myDevConfig;

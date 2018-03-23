@@ -1,4 +1,5 @@
 import IStorage from './IStorage';
+import {Promise} from 'es6-promise';
 
 interface ICookieStore {
     [name: string]: string;

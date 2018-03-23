@@ -1,5 +1,6 @@
 import IStorage from './IStorage';
 import {StorageUtils} from '../Utils/Storage';
+import {Promise} from 'es6-promise';
 
 /**
  * Storage driver for browser's localStorage

@@ -7,6 +7,7 @@ export { default as IStorage } from './StorageAdapters/IStorage';
 export default class PhaserSuperStorage {
     private storage;
     private scene;
+    private static nameSpace;
     constructor(scene?: Phaser.Scene);
     static register(manager: any): void;
     private boot();

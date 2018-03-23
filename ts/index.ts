@@ -12,6 +12,8 @@ export default class PhaserSuperStorage {
 
     private scene: Phaser.Scene;
 
+    private static nameSpace: string = '';
+
     constructor(scene?: Phaser.Scene) {
         //  The Scene that owns this plugin
         this.scene = scene;
@@ -31,10 +33,18 @@ export default class PhaserSuperStorage {
         } else {
             this.setAdapter(new StorageAdapters.CookieStorage());
         }
+
+        if (PhaserSuperStorage.nameSpace.length > 0) {
+            this.storage.setNamespace(PhaserSuperStorage.nameSpace);
+        }
     }
 
     public setAdapter(storageAdapter: StorageAdapters.IStorage): void {
         this.storage = storageAdapter;
+
+        if (PhaserSuperStorage.nameSpace.length > 0) {
+            this.storage.setNamespace(PhaserSuperStorage.nameSpace);
+        }
     }
 
     get forcePromises(): boolean {
@@ -54,6 +64,8 @@ export default class PhaserSuperStorage {
     }
 
     public setNamespace(namedSpace: string): void | Promise<void> {
+        PhaserSuperStorage.nameSpace = namedSpace;
+
         if (this.storage !== null) {
             return this.storage.setNamespace(namedSpace);
         }
