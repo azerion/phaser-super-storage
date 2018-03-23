@@ -10,17 +10,14 @@ Key features:
  
 Requirements
  - If you use TypeScript, also include the types for es6-promise in your project
+ 
+# NOTE: These docs are not updated for V3 yet!!!
 
 Getting Started
 ===============
 First you want to get a fresh copy of the plugin. You can get it from this repo or from npm, ain't that handy.
 ```
 npm install @orange-games/phaser-super-storage --save-dev
-```
-
-Next up you'd want to add it to your list of js sources you load into your game
-```html
-<script src="path/to/phaser-super-storage.min.js"></script>
 ```
 
 After adding the script to the page you can activate it by enabling the plugin:
