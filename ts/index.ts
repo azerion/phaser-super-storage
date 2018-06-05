@@ -7,19 +7,22 @@ export {default as LocalStorage} from './StorageAdapters/LocalStorage';
 export {default as IframeStorage} from './StorageAdapters/IframeStorage';
 export {default as IStorage} from './StorageAdapters/IStorage';
 
-export default class PhaserSuperStorage {
+export default class PhaserSuperStorage extends Phaser.Plugins.BasePlugin {
     private storage: StorageAdapters.IStorage;
 
-    private scene: Phaser.Scene;
+    private nameSpace: string = '';
 
-    private static nameSpace: string = '';
+    constructor(game: Phaser.Game) {
+        super(game);
 
-    constructor(scene?: Phaser.Scene) {
-        //  The Scene that owns this plugin
-        this.scene = scene;
+        if (StorageUtils.isLocalStorageSupport()) {
+            this.setAdapter(new StorageAdapters.LocalStorage());
+        } else {
+            this.setAdapter(new StorageAdapters.CookieStorage());
+        }
 
-        if (!this.scene.sys.settings.isBooted) {
-            this.scene.sys.events.once('boot', () => this.boot);
+        if (this.nameSpace.length > 0) {
+            this.storage.setNamespace(this.nameSpace);
         }
     }
 
@@ -27,23 +30,16 @@ export default class PhaserSuperStorage {
         manager.register('PhaserSuperStorage', PhaserSuperStorage, 'storage');
     }
 
-    private boot(): void {
-        if (StorageUtils.isLocalStorageSupport()) {
-            this.setAdapter(new StorageAdapters.LocalStorage());
-        } else {
-            this.setAdapter(new StorageAdapters.CookieStorage());
-        }
-
-        if (PhaserSuperStorage.nameSpace.length > 0) {
-            this.storage.setNamespace(PhaserSuperStorage.nameSpace);
-        }
+    public destroy(): void {
+        super.destroy();
+        this.storage = null;
     }
 
     public setAdapter(storageAdapter: StorageAdapters.IStorage): void {
         this.storage = storageAdapter;
 
-        if (PhaserSuperStorage.nameSpace.length > 0) {
-            this.storage.setNamespace(PhaserSuperStorage.nameSpace);
+        if (this.nameSpace.length > 0) {
+            this.storage.setNamespace(this.nameSpace);
         }
     }
 
@@ -64,7 +60,7 @@ export default class PhaserSuperStorage {
     }
 
     public setNamespace(namedSpace: string): void | Promise<void> {
-        PhaserSuperStorage.nameSpace = namedSpace;
+        this.nameSpace = namedSpace;
 
         if (this.storage !== null) {
             return this.storage.setNamespace(namedSpace);

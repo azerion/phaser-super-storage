@@ -15,7 +15,7 @@ export default class CordovaStorage implements IStorage {
     removeItem(key: string): Promise<void>;
     clear(): Promise<void>;
     setNamespace(spacedName?: string): Promise<void>;
-    private promisefy(value);
-    private load();
-    private save();
+    private promisefy;
+    private load;
+    private save;
 }

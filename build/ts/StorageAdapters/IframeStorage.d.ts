@@ -18,5 +18,5 @@ export default class IframeStorage implements IStorage {
     removeItem(key: string): Promise<void>;
     clear(): Promise<void>;
     setNamespace(spacedName: string): Promise<void>;
-    private sendMessage(message);
+    private sendMessage;
 }

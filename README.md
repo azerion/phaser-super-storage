@@ -18,25 +18,29 @@ First you want to get a fresh copy of the plugin. You can get it from this repo 
 npm install @orange-games/phaser-super-storage@2.0.0-beta.1 --save-dev
 ```
 
-After adding the script to the page you can activate it by preloading the plugin and installing it in your scene:
+After adding the script to the page you can activate it by preloading the plugin and installing it as a global plugin:
 ```javascript
 import PhaserSuperStorage from '@orange-games/phaser-super-storage';
 
-
 class MyScene extends Phaser.Scene {
     preload: () => {
-        this.load.plugin('PhaserSuperStorage', PhaserSuperStorage);
+        //either install or preload
+        this.plugins.install(
+            'PhaserSuperStorage',   //Plugin unique key
+            PhaserSuperStorage,     //The plugin
+            true,                   //Auto start
+            'storage'               //The scene mapping
+        );
     }
     
     create: () => {
-        this.sys.install('PhaserSuperStorage');
-        this.sys.storage.setNamespace('my-namespace');
+        this.storage.setNamespace('my-namespace');
     }
 }
 
-
-
 ```
+
+It's imperitive to install this plugin as global plugin due to how the namespacing of storage key's is handled!
 
 Usage
 =====
@@ -47,22 +51,22 @@ When you installed the plugin in your scene you can access it trough this.sys.st
 
 ```javascript
 //Store Tetris at FavoriteGame
-this.sys.storage.setItem('FavoriteGame', 'Tetris');
+this.storage.setItem('FavoriteGame', 'Tetris');
 
 //Get FavoriteGame
 let favoriteGame = this.sys.storage.getItem('FavoriteGame');  // Tetris
 
 //Remove FavoriteGame
-this.sys.storage.removeItem('FavoriteGame');
+this.storage.removeItem('FavoriteGame');
 
 //get the length of all items in storage
 let l = this.sys.storage.length;    // 1
 
 //Get the name of the key at the n'th position
-let keyName = this.sys.storage.key(0); // FavoriteGame
+let keyName = this.storage.key(0); // FavoriteGame
 
 //Clear all keys
-this.sys.storage.clear();
+this.storage.clear();
 ```
 
 Namespaces
@@ -71,16 +75,16 @@ If you are like us, and put multiple games on the same domain, you might want to
 This allows you to set a 'score' key for multiple games on the same domain, and they'll always get their own stored value
 
 ```javascript
-this.sys.storage.setNamespace('tetris');
-this.sys.storage.setItem('score', 250);
+this.storage.setNamespace('tetris');
+this.storage.setItem('score', 250);
 
-this.sys.storage.setNamespace('pong');
+this.storage.setNamespace('pong');
 
 //Length also takes namespaces into account
-let l = this.sys.storage.length;    // 0
+let l = this.storage.length;    // 0
 
 //this won't do because the score was registered under a different namespace
-let value = this.sys.storage.get('score'); // null
+let value = this.storage.get('score'); // null
 
 ```
 
@@ -93,11 +97,11 @@ In order for you to parse your result nicely phaser-super-storage uses Promises 
 It is also possible to enable promises on the Cookie and localStorage adapters by setting forcePromises to true.
 ```javascript
 //classical way of getting your item
-let item = this.sys.storage.getItem('key');
+let item = this.storage.getItem('key');
 
 //Now we are gonna force promises
-this.sys.storage.forcePromises = true;
-this.sys.storage.getItem('key').then(function (item) {
+this.storage.forcePromises = true;
+this.storage.getItem('key').then(function (item) {
     //do something with the item here
 });
 ```
@@ -143,7 +147,7 @@ Cordova
 -------
 You can now also use the CordovaStorage adapter, which uses the NativeStorage plugin of cordova. This prevents the auto-deletion of data on IOS when not having enough memory. If you are using the adapter, please note that passing the namespace in the constructor is not allowed and that it is only testable in a cordova application. It can be enabled by the following command:
 ```javascript
-this.sys.storage.setAdapter(new PhaserSuperStorage.StorageAdapters.CordovaStorage());
+this.storage.setAdapter(new PhaserSuperStorage.StorageAdapters.CordovaStorage());
 ```
 
 
@@ -167,10 +171,10 @@ let iframeAdapter = new IframeStorage(
 //We call init first to see if the helper script is available, result as a Promise due to asynchronous communication
 iframeAdapter.init().then(() => {
     //It succeeded! Now set the iframe adapter as the main storage adapter
-    this.sys.storage.setAdapter(iframeAdapter);
+    this.storage.setAdapter(iframeAdapter);
 }).catch((e) => {
     //failed to start communication with parent, so lets enable promises on the original storage adapter to keep the API the same
-    this.sys.storage.forcePromises = true;
+    this.storage.forcePromises = true;
 });
 ```
 

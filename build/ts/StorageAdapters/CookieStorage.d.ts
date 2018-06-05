@@ -15,7 +15,7 @@ export default class CookieStorage implements IStorage {
     removeItem(key: string): void | Promise<void>;
     clear(): void | Promise<void>;
     setNamespace(namespace: string): void | Promise<void>;
-    private getNameSpaceMatches();
-    private getCookiesForNameSpace();
-    private promisefy(value);
+    private getNameSpaceMatches;
+    private getCookiesForNameSpace;
+    private promisefy;
 }

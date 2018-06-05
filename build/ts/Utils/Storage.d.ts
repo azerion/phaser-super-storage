@@ -19,5 +19,5 @@ export declare enum StorageCommand {
     setNamespace = 5,
     length = 6,
     key = 7,
-    error = 8,
+    error = 8
 }

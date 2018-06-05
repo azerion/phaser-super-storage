@@ -9,16 +9,16 @@ export default class LocalStorage implements IStorage {
     constructor(spacedName?: string);
     readonly length: number;
     key(n: number): any | Promise<any>;
-    private _key(n);
+    private _key;
     getItem(key: string): any | Promise<any>;
-    private _getItem(key);
+    private _getItem;
     setItem(key: string, value: any): void | Promise<void>;
-    private _setItem(key, value);
+    private _setItem;
     removeItem(key: string): void | Promise<void>;
-    private _removeItem(key);
+    private _removeItem;
     clear(): void | Promise<void>;
-    private _clear();
+    private _clear;
     setNamespace(spacedName: string): void | Promise<void>;
-    private _setNameSpace(spacedName);
-    private promisefy(value, args);
+    private _setNameSpace;
+    private promisefy;
 }
