@@ -3,7 +3,6 @@
 const webpack = require('webpack');
 const path = require('path');
 const config = require('../package.json');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const basePath = path.join(__dirname, '../');
 
 module.exports = {

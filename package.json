@@ -1,7 +1,7 @@
 {
   "name": "@orange-games/phaser-super-storage",
   "author": "OrangeGames",
-  "version": "2.0.0-beta.2",
+  "version": "2.0.0-beta.3",
   "description": "A cross platform storage plugin for Phaser",
   "contributors": [
     {
@@ -16,8 +16,8 @@
   "license": "MIT",
   "bugs": "https://github.com/orange-games/phaser-super-storage/issues",
   "scripts": {
-    "dev": "webpack-dev-server --config ./config/webpack.dev.config.js",
-    "dist": "webpack --config ./config/webpack.dist.config.js --progress --colors"
+    "dev": "webpack-dev-server --mode development --config ./config/webpack.dev.config.js",
+    "dist": "webpack --mode production --config ./config/webpack.dist.config.js --progress --colors"
   },
   "config": {
     "name": "phaser-super-storage"
@@ -40,12 +40,13 @@
     "happypack": "^4.0.1",
     "html-webpack-plugin": "^2.30.1",
     "raw-loader": "^0.5.1",
-    "ts-loader": "^3.5.0",
+    "ts-loader": "^4.3.0",
     "tslint": "^5.10.0",
     "tslint-loader": "^3.6.0",
     "typescript": "2.9.x",
-    "webpack": "^3.12.0",
-    "webpack-dev-server": "^2.11.2"
+    "webpack": "^4.11.x",
+    "webpack-cli": "^3.0.2",
+    "webpack-dev-server": "^3.1.4"
   },
   "dependencies": {
     "phaser": "^3.9.0",

@@ -46,22 +46,6 @@ module.exports = function (env) {
             //        tsconfig: path.join(basePath, 'tsconfig.json')
             //    }
             //),
-            new webpack.optimize.UglifyJsPlugin({
-                    exclude: /\/node_modules/,
-                    compress: {
-                        sequences: true,
-                        dead_code: true,
-                        conditionals: true,
-                        booleans: true,
-                        unused: true,
-                        if_return: true,
-                        join_vars: true,
-                        drop_console: true,
-                    },
-                    mangle: false,
-                    sourceMap: true
-                }
-            ),
         ]
     );
     return myDevConfig;
