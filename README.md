@@ -15,44 +15,58 @@ Getting Started
 ===============
 First you want to get a fresh copy of the plugin. You can get it from this repo or from npm, ain't that handy.
 ```
-npm install @orange-games/phaser-super-storage --save-dev
+npm install @orange-games/phaser-super-storage@2.0.0-beta.1 --save-dev
 ```
 
-Next up you'd want to add it to your list of js sources you load into your game
-```html
-<script src="path/to/phaser-super-storage.min.js"></script>
-```
-
-After adding the script to the page you can activate it by enabling the plugin:
+After adding the script to the page you can activate it by preloading the plugin and installing it as a global plugin:
 ```javascript
-game.add.plugin(PhaserSuperStorage.StoragePlugin);
+import PhaserSuperStorage from '@orange-games/phaser-super-storage';
+
+class MyScene extends Phaser.Scene {
+    preload: () => {
+        //either install or preload
+        this.plugins.install(
+            'PhaserSuperStorage',   //Plugin unique key
+            PhaserSuperStorage,     //The plugin
+            true,                   //Auto start
+            'storage'               //The scene mapping
+        );
+    }
+    
+    create: () => {
+        this.storage.setNamespace('my-namespace');
+    }
+}
+
 ```
+
+It's imperitive to install this plugin as global plugin due to how the namespacing of storage key's is handled!
 
 Usage
 =====
 When you load the plugin, it automatically checks for availability of localStorage and fallbacks to cookies if it's not available.
 Both of these are StorageAdapters and will be overwritten if you register a custom StorageAdaper, but more on this later.
 
-The plugin will append the Phaser game object with a storage object, you can reference this object with exactly the same API as localStorage, and should therefor be fairly easy for you to implement.
+When you installed the plugin in your scene you can access it trough this.sys.storage. (Or this.storage if you have added it to your InjectionMap)
 
 ```javascript
 //Store Tetris at FavoriteGame
-game.storage.setItem('FavoriteGame', 'Tetris');
+this.storage.setItem('FavoriteGame', 'Tetris');
 
 //Get FavoriteGame
-var favoriteGame = game.storage.getItem('FavoriteGame');  // Tetris
+let favoriteGame = this.sys.storage.getItem('FavoriteGame');  // Tetris
 
 //Remove FavoriteGame
-game.storage.removeItem('FavoriteGame');
+this.storage.removeItem('FavoriteGame');
 
 //get the length of all items in storage
-var l = game.storage.length;    // 1
+let l = this.sys.storage.length;    // 1
 
 //Get the name of the key at the n'th position
-var keyName = game.storage.key(0); // FavoriteGame
+let keyName = this.storage.key(0); // FavoriteGame
 
 //Clear all keys
-game.storage.clear();
+this.storage.clear();
 ```
 
 Namespaces
@@ -61,16 +75,16 @@ If you are like us, and put multiple games on the same domain, you might want to
 This allows you to set a 'score' key for multiple games on the same domain, and they'll always get their own stored value
 
 ```javascript
-game.storage.setNamespace('tetris');
-game.storage.setItem('score', 250);
+this.storage.setNamespace('tetris');
+this.storage.setItem('score', 250);
 
-game.storage.setNamespace('pong');
+this.storage.setNamespace('pong');
 
 //Length also takes namespaces into account
-var l = game.storage.length;    // 0
+let l = this.storage.length;    // 0
 
 //this won't do because the score was registered under a different namespace
-var value = game.storage.get('score'); // null
+let value = this.storage.get('score'); // null
 
 ```
 
@@ -83,11 +97,11 @@ In order for you to parse your result nicely phaser-super-storage uses Promises 
 It is also possible to enable promises on the Cookie and localStorage adapters by setting forcePromises to true.
 ```javascript
 //classical way of getting your item
-var item = game.storage.getItem('key');
+let item = this.storage.getItem('key');
 
 //Now we are gonna force promises
-game.storage.forcePromises = true;
-game.storage.getItem('key').then(function (item) {
+this.storage.forcePromises = true;
+this.storage.getItem('key').then(function (item) {
     //do something with the item here
 });
 ```
@@ -133,7 +147,7 @@ Cordova
 -------
 You can now also use the CordovaStorage adapter, which uses the NativeStorage plugin of cordova. This prevents the auto-deletion of data on IOS when not having enough memory. If you are using the adapter, please note that passing the namespace in the constructor is not allowed and that it is only testable in a cordova application. It can be enabled by the following command:
 ```javascript
-game.storage.setAdapter(new PhaserSuperStorage.StorageAdapters.CordovaStorage());
+this.storage.setAdapter(new PhaserSuperStorage.StorageAdapters.CordovaStorage());
 ```
 
 
@@ -149,18 +163,18 @@ This way we'll utilize the storage capacity of the parent frame to store our dat
 
 ```javascript
 //Then in our game we add the iframe adapter
-var iframeAdapter = new IframeStorage(
+let iframeAdapter = new IframeStorage(
     '',                     //The namespace to store the data under
     document.referrer       //Then url of the parent domain, you need this for security reasons
 );
 
 //We call init first to see if the helper script is available, result as a Promise due to asynchronous communication
-iframeAdapter.init().then(function() {
+iframeAdapter.init().then(() => {
     //It succeeded! Now set the iframe adapter as the main storage adapter
-    game.storage.setAdapter(iframeAdapter);
-}).catch(function (e) {
+    this.storage.setAdapter(iframeAdapter);
+}).catch((e) => {
     //failed to start communication with parent, so lets enable promises on the original storage adapter to keep the API the same
-    game.storage.forcePromises = true;
+    this.storage.forcePromises = true;
 });
 ```
 

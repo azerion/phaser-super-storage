@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "module": "es6",
+        "target": "es5",
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "declaration": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noImplicitAny":true,
+        "isolatedModules": false
+    },
+    "files": [
+        "vendor/phaser.d.ts",
+        "ts/index.ts"
+    ]
+}

@@ -1,102 +1,102 @@
-module PhaserSuperStorage {
-    export module StorageAdapters {
-        /**
-         * Storage driver for browser's localStorage
-         */
-        export class LocalStorage implements IStorage {
-            public namespace: string = '';
+import IStorage from './IStorage';
+import {StorageUtils} from '../Utils/Storage';
+import {Promise} from 'es6-promise';
 
-            public forcePromises: boolean = false;
+/**
+ * Storage driver for browser's localStorage
+ */
+export default class LocalStorage implements IStorage {
+    public namespace: string = '';
 
-            constructor(spacedName: string = '') {
-                this.setNamespace(spacedName);
-            }
+    public forcePromises: boolean = false;
 
-            get length(): number {
-                let keys: string [] = Object.keys(localStorage);
+    constructor(spacedName: string = '') {
+        this.setNamespace(spacedName);
+    }
 
-                return StorageUtils.nameSpaceKeyFilter(keys, this.namespace).length;
-            }
+    get length(): number {
+        let keys: string [] = Object.keys(localStorage);
 
-            public key(n: number): any | Promise<any> {
-                return this.forcePromises ?
-                    this.promisefy(this._key, <any>arguments) :
-                    this._key(n);
-            }
+        return StorageUtils.nameSpaceKeyFilter(keys, this.namespace).length;
+    }
 
-            private _key(n: number): any {
-                let keys: string[] = Object.keys(localStorage);
-                let spacedKeys: string[] = StorageUtils.nameSpaceKeyFilter(keys, this.namespace);
+    public key(n: number): any | Promise<any> {
+        return this.forcePromises ?
+            this.promisefy(this._key, <any>arguments) :
+            this._key(n);
+    }
 
-                let item: any = localStorage.getItem(spacedKeys[n]);
+    private _key(n: number): any {
+        let keys: string[] = Object.keys(localStorage);
+        let spacedKeys: string[] = StorageUtils.nameSpaceKeyFilter(keys, this.namespace);
 
-                return item;
-            }
+        let item: any = localStorage.getItem(spacedKeys[n]);
 
-            public getItem(key: string): any | Promise<any> {
-                return this.forcePromises ?
-                    this.promisefy(this._getItem, <any>arguments) :
-                    this._getItem(key);
-            }
+        return item;
+    }
 
-            private _getItem(key: string): string {
-                return localStorage.getItem(this.namespace + key);
-            }
+    public getItem(key: string): any | Promise<any> {
+        return this.forcePromises ?
+            this.promisefy(this._getItem, <any>arguments) :
+            this._getItem(key);
+    }
 
-            public setItem(key: string, value: any): void | Promise<void> {
-                return this.forcePromises ?
-                    this.promisefy(this._setItem, <any>arguments) :
-                    this._setItem(key, value);
-            }
+    private _getItem(key: string): string {
+        return localStorage.getItem(this.namespace + key);
+    }
 
-            private _setItem(key: string, value: any): void {
-                return localStorage.setItem(this.namespace + key, value);
-            }
+    public setItem(key: string, value: any): void | Promise<void> {
+        return this.forcePromises ?
+            this.promisefy(this._setItem, <any>arguments) :
+            this._setItem(key, value);
+    }
 
-            public removeItem(key: string): void | Promise<void> {
-                return this.forcePromises ?
-                    this.promisefy(this._removeItem, <any>arguments) :
-                    this._removeItem(key);
-            }
+    private _setItem(key: string, value: any): void {
+        return localStorage.setItem(this.namespace + key, value);
+    }
 
-            private _removeItem(key: string): void {
-                return localStorage.removeItem(this.namespace + key);
-            }
+    public removeItem(key: string): void | Promise<void> {
+        return this.forcePromises ?
+            this.promisefy(this._removeItem, <any>arguments) :
+            this._removeItem(key);
+    }
 
-            public clear(): void | Promise<void> {
-                return this.forcePromises ?
-                    this.promisefy(this._clear, <any>arguments) :
-                    this._clear();
-            }
+    private _removeItem(key: string): void {
+        return localStorage.removeItem(this.namespace + key);
+    }
 
-            private _clear(): void {
-                let keys: string[] = Object.keys(localStorage);
-                let spacedKeys: string[] = StorageUtils.nameSpaceKeyFilter(keys, this.namespace);
+    public clear(): void | Promise<void> {
+        return this.forcePromises ?
+            this.promisefy(this._clear, <any>arguments) :
+            this._clear();
+    }
 
-                for (let i: number = 0; i < spacedKeys.length; i++) {
-                    localStorage.removeItem(spacedKeys[i]);
-                }
+    private _clear(): void {
+        let keys: string[] = Object.keys(localStorage);
+        let spacedKeys: string[] = StorageUtils.nameSpaceKeyFilter(keys, this.namespace);
 
-                return;
-            }
-
-            public setNamespace(spacedName: string): void | Promise<void> {
-                return this.forcePromises ?
-                    this.promisefy(this._setNameSpace, <any>arguments) :
-                    this._setNameSpace(spacedName);
-            }
-
-            private _setNameSpace(spacedName: string): void {
-                if (spacedName) {
-                    this.namespace = spacedName + ':';
-                }
-            }
-
-            private promisefy(value: any, args: any): Promise<any> {
-                return new Promise((resolve: (value?: any | Thenable<any>) => void, reject: (error?: any) => void) => {
-                    resolve(value.apply(this, args));
-                });
-            }
+        for (let i: number = 0; i < spacedKeys.length; i++) {
+            localStorage.removeItem(spacedKeys[i]);
         }
+
+        return;
+    }
+
+    public setNamespace(spacedName: string): void | Promise<void> {
+        return this.forcePromises ?
+            this.promisefy(this._setNameSpace, <any>arguments) :
+            this._setNameSpace(spacedName);
+    }
+
+    private _setNameSpace(spacedName: string): void {
+        if (spacedName) {
+            this.namespace = spacedName + ':';
+        }
+    }
+
+    private promisefy(value: any, args: any): Promise<any> {
+        return new Promise((resolve: (value?: any | Promise<any>) => void) => {
+            resolve(value.apply(this, args));
+        });
     }
 }
