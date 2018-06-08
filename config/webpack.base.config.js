@@ -26,10 +26,6 @@ module.exports = {
             {
                 test: /images(\/|\\)/,
                 loader: 'file-loader?name=images/[hash].[ext]',
-            },
-            {
-                test: [ /\.vert$/, /\.frag$/ ],
-                use: 'raw-loader'
             }
         ],
     },

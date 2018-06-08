@@ -2,16 +2,11 @@
 const webpack = require('webpack');
 const path = require('path');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
-const ForkTsCheckerNotifierWebpackPlugin = require(
-    'fork-ts-checker-notifier-webpack-plugin'
-);
-var DeclarationBundlerPlugin = require('declaration-bundler-webpack-plugin');
-const HappyPack = require('happypack');
 const basePath = path.join(__dirname, '../');
 const config = require('../package.json');
+
 let webpackConfig = require('./webpack.base.config.js');
+
 module.exports = function (env) {
     let myDevConfig = webpackConfig;
     myDevConfig.devtool = 'source-map';
@@ -39,13 +34,6 @@ module.exports = function (env) {
                     root: basePath
                 }
             ),
-            //new ForkTsCheckerNotifierWebpackPlugin({alwaysNotify: true}),
-            //new ForkTsCheckerWebpackPlugin({
-            //        checkSyntacticErrors: true,
-            //        tslint: path.join(basePath, 'tslint.json'),
-            //        tsconfig: path.join(basePath, 'tsconfig.json')
-            //    }
-            //),
         ]
     );
     return myDevConfig;

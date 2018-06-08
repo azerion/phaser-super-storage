@@ -3,9 +3,6 @@
 const webpack = require('webpack');
 const path = require('path');
 const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
-//const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
-//const ForkTsCheckerNotifierWebpackPlugin = require(
-//    'fork-ts-checker-notifier-webpack-plugin');
 const config = require('../package.json');
 
 let webpackConfig = require('./webpack.base.config.js');
@@ -41,24 +38,6 @@ module.exports = function() {
             port: process.env.PORT || 3000,
             proxy: 'http://localhost:8080',
         }),
-        //new HappyPack({
-        //    id: 'ts',
-        //    verbose: false,
-        //    threads: 2,
-        //    loaders: [
-        //        'cache-loader',
-        //        {
-        //            path: 'ts-loader',
-        //            query: {happyPackMode: true},
-        //        },
-        //    ],
-        //}),
-        //new ForkTsCheckerNotifierWebpackPlugin({alwaysNotify: true}),
-        //new ForkTsCheckerWebpackPlugin({
-        //    checkSyntacticErrors: true,
-        //    tslint: path.join(basePath, 'tslint.json'),
-        //    tsconfig: path.join(basePath, 'tsconfig.json'),
-        //}),
     ]);
 
     return myDevConfig;

@@ -1,6 +1,7 @@
 Phaser Super Storage
 ====================
-A cross platform pluggable storage plugin for Phaser.
+A cross platform pluggable storage plugin for Phaser V3.
+Te original for v2 is still available both here and on npm, but won't receive any feature updates anymore.
 
 Key features:
  - Cross browser support
@@ -15,7 +16,7 @@ Getting Started
 ===============
 First you want to get a fresh copy of the plugin. You can get it from this repo or from npm, ain't that handy.
 ```
-npm install @orange-games/phaser-super-storage@2.0.0-beta.1 --save-dev
+npm install @orange-games/phaser-super-storage@2.0.0
 ```
 
 After adding the script to the page you can activate it by preloading the plugin and installing it as a global plugin:
@@ -34,7 +35,7 @@ class MyScene extends Phaser.Scene {
     }
     
     create: () => {
-        this.storage.setNamespace('my-namespace');
+        this.plugins.get().setNamespace('my-namespace');
     }
 }
 
@@ -54,13 +55,13 @@ When you installed the plugin in your scene you can access it trough this.sys.st
 this.storage.setItem('FavoriteGame', 'Tetris');
 
 //Get FavoriteGame
-let favoriteGame = this.sys.storage.getItem('FavoriteGame');  // Tetris
+let favoriteGame = this.storage.getItem('FavoriteGame');  // Tetris
 
 //Remove FavoriteGame
 this.storage.removeItem('FavoriteGame');
 
 //get the length of all items in storage
-let l = this.sys.storage.length;    // 1
+let l = this.storage.length;    // 1
 
 //Get the name of the key at the n'th position
 let keyName = this.storage.key(0); // FavoriteGame
