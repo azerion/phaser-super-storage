@@ -47,21 +47,6 @@ declare module PhaserSuperStorage {
 }
 declare module PhaserSuperStorage {
     module StorageAdapters {
-        interface IStorage {
-            forcePromises: boolean;
-            length: number;
-            namespace: string;
-            getItem(key: string): any | Promise<any>;
-            removeItem(key: string): any | Promise<any>;
-            setItem(key: string, value: any): void | Promise<void>;
-            key(n: number): any | Promise<any>;
-            clear(): void | Promise<void>;
-            setNamespace(namespace: string): void | Promise<void>;
-        }
-    }
-}
-declare module PhaserSuperStorage {
-    module StorageAdapters {
         /**
          * Storage driver for browser's localStorage
          */
@@ -81,6 +66,21 @@ declare module PhaserSuperStorage {
             clear(): Promise<void>;
             setNamespace(spacedName: string): Promise<void>;
             private sendMessage(message);
+        }
+    }
+}
+declare module PhaserSuperStorage {
+    module StorageAdapters {
+        interface IStorage {
+            forcePromises: boolean;
+            length: number;
+            namespace: string;
+            getItem(key: string): any | Promise<any>;
+            removeItem(key: string): any | Promise<any>;
+            setItem(key: string, value: any): void | Promise<void>;
+            key(n: number): any | Promise<any>;
+            clear(): void | Promise<void>;
+            setNamespace(namespace: string): void | Promise<void>;
         }
     }
 }

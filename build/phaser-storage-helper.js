@@ -2,13 +2,14 @@
  * phaser-super-storage - version 1.0.4 
  * A cross platform storage plugin for Phaser
  *
- * OrangeGames
- * Build at 02-10-2017
+ * Azerion
+ * Build at 15-03-2019
  * Released under MIT License 
  */
 
 var PhaserSuperStorage;
 (function (PhaserSuperStorage) {
+    var StorageCommand;
     (function (StorageCommand) {
         StorageCommand[StorageCommand["init"] = 0] = "init";
         StorageCommand[StorageCommand["setItem"] = 1] = "setItem";
@@ -19,8 +20,7 @@ var PhaserSuperStorage;
         StorageCommand[StorageCommand["length"] = 6] = "length";
         StorageCommand[StorageCommand["key"] = 7] = "key";
         StorageCommand[StorageCommand["error"] = 8] = "error";
-    })(PhaserSuperStorage.StorageCommand || (PhaserSuperStorage.StorageCommand = {}));
-    var StorageCommand = PhaserSuperStorage.StorageCommand;
+    })(StorageCommand = PhaserSuperStorage.StorageCommand || (PhaserSuperStorage.StorageCommand = {}));
     var StorageUtils = (function () {
         function StorageUtils() {
         }

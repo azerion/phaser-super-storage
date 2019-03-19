@@ -15,7 +15,7 @@ Getting Started
 ===============
 First you want to get a fresh copy of the plugin. You can get it from this repo or from npm, ain't that handy.
 ```
-npm install @orange-games/phaser-super-storage --save-dev
+npm install @azerion/phaser-super-storage --save-dev
 ```
 
 Next up you'd want to add it to your list of js sources you load into your game
@@ -170,7 +170,7 @@ Although we try our best to store data, in some cases you can consider data lost
 
 Disclaimer
 ==========
-We at OrangeGames just love playing and creating awesome games. We aren't affiliated with Phaser.io. We just needed to storage some awesome data in our awesome HTML5 games. Feel free to use it for enhancing your own awesome games!
+We at Azerion just love playing and creating awesome games. We aren't affiliated with Phaser.io. We just needed to storage some awesome data in our awesome HTML5 games. Feel free to use it for enhancing your own awesome games!
 
 Phaser Super Storage is distributed under the MIT license. All 3rd party libraries and components are distributed under their
 respective license terms.
